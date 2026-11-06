@@ -1,22 +1,31 @@
-// Tema neutro en escala de grises y tema de alto contraste (negro/blanco).
+// Tema claro (blanco con un leve toque cálido, entre blanco y beige) y tema
+// de alto contraste (gris muy oscuro y blanco).
 //
 // Contrastes (aprox., WCAG):
-//  - Texto #1A1A1A sobre #FFFFFF: 17,4:1; sobre #F7F7F7: 16,2:1.
-//  - Texto secundario #4D4D4D sobre #F7F7F7: 7,9:1.
-//  - Texto blanco sobre botón #3D3D3D: 11,0:1.
-//  - Alto contraste: blanco sobre negro 21:1.
+//  - Texto #1A1A1A sobre tarjeta #FFFCF7: 17,0:1; sobre fondo #F8F4EC: 15,9:1;
+//    sobre cabecera #ECE6DA: 14,0:1.
+//  - Texto secundario #4D4D4D sobre #F8F4EC: 7,7:1.
+//  - Texto blanco sobre botón #3D3D3D: 10,9:1.
+//  - Alto contraste: blanco sobre #1E1E1E: 16,7:1; sobre #262626: 15,1:1;
+//    sobre #2B2B2B: 14,2:1.
 
 import 'package:flutter/material.dart';
 
 ThemeData construirTema({required bool altoContraste}) {
-  final fondo = altoContraste ? Colors.black : const Color(0xFFF7F7F7);
-  final tarjeta = altoContraste ? Colors.black : Colors.white;
-  final cabecera = altoContraste ? Colors.black : const Color(0xFFE6E6E6);
+  final fondo = altoContraste
+      ? const Color(0xFF1E1E1E)
+      : const Color(0xFFF8F4EC);
+  final tarjeta = altoContraste
+      ? const Color(0xFF262626)
+      : const Color(0xFFFFFCF7);
+  final cabecera = altoContraste
+      ? const Color(0xFF2B2B2B)
+      : const Color(0xFFECE6DA);
   final texto = altoContraste ? Colors.white : const Color(0xFF1A1A1A);
   final textoSec = altoContraste ? Colors.white : const Color(0xFF4D4D4D);
   final borde = altoContraste ? Colors.white : const Color(0xFF212121);
   final primario = altoContraste ? Colors.white : const Color(0xFF3D3D3D);
-  final sobrePrimario = altoContraste ? Colors.black : Colors.white;
+  final sobrePrimario = altoContraste ? const Color(0xFF1E1E1E) : Colors.white;
 
   final esquema = ColorScheme(
     brightness: altoContraste ? Brightness.dark : Brightness.light,
@@ -35,7 +44,7 @@ ThemeData construirTema({required bool altoContraste}) {
     surfaceContainerHigh: cabecera,
     surfaceContainerHighest: cabecera,
     outline: borde,
-    outlineVariant: altoContraste ? Colors.white : const Color(0xFF8A8A8A),
+    outlineVariant: altoContraste ? Colors.white : const Color(0xFF8C867B),
     secondaryContainer: tarjeta,
     onSecondaryContainer: texto,
     primaryContainer: tarjeta,
