@@ -121,4 +121,12 @@ test/accesibilidad_test.dart
   y un botón a la lista de paradas. El resto de la app funciona sin conexión.
 - **Ubicación**: simulada. Se muestra el diálogo explicativo, pero no se pide el permiso
   del sistema ni se usa el GPS.
+- **Vibración del aviso (P7)**: usa el vibrador del dispositivo (paquete `vibration`,
+  permiso `VIBRATE`) con el patrón `[0, 400, 200, 400]` y uso de alarma, en
+  `lib/alertas.dart`. No se usa `HapticFeedback`: en Android es un «clic» táctil
+  (CONTEXT_CLICK) que depende del ajuste de respuesta táctil y a menudo no se nota.
+  Cada aviso deja en el log `RutaFacil · aviso: vibración [0, 400, 200, 400]`.
+  La vibración nunca es la única señal: hay también una caja visual y un anuncio
+  para TalkBack. Los emuladores no suelen tener vibrador, así que hay que probarlo
+  en un móvil.
 - Los ajustes no se guardan al cerrar la app (se hará en la siguiente iteración).
