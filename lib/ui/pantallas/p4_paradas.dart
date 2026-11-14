@@ -35,28 +35,13 @@ class _PantallaParadasState extends State<PantallaParadas> {
           children: [
             Padding(
               padding: const EdgeInsets.fromLTRB(20, 20, 20, 16),
-              child: TextField(
+              child: CampoTexto(
+                etiqueta: 'Buscar parada',
                 controller: _ctrl,
-                style: tt.bodyLarge,
-                onChanged: (_) => setState(() {}),
+                pista: 'Escribe el nombre',
                 textInputAction: TextInputAction.search,
-                decoration: InputDecoration(
-                  labelText: 'Buscar parada',
-                  floatingLabelBehavior: FloatingLabelBehavior.always,
-                  labelStyle: tt.titleMedium,
-                  hintText: 'Escribe el nombre',
-                  suffixIcon: _ctrl.text.isEmpty
-                      ? null
-                      : IconButton(
-                          tooltip: 'Borrar búsqueda',
-                          style: IconButton.styleFrom(
-                            side: BorderSide.none,
-                            backgroundColor: Colors.transparent,
-                          ),
-                          icon: const Icon(Icons.close),
-                          onPressed: () => setState(_ctrl.clear),
-                        ),
-                ),
+                onChanged: (_) => setState(() {}),
+                onBorrar: () => setState(_ctrl.clear),
               ),
             ),
             Padding(
@@ -71,17 +56,18 @@ class _PantallaParadasState extends State<PantallaParadas> {
             ),
             if (lista.isEmpty)
               Padding(
-                padding: const EdgeInsets.all(20),
-                child: Text(
-                  'No hay paradas con ese nombre.',
-                  style: tt.bodyLarge,
+                padding: const EdgeInsets.fromLTRB(20, 8, 20, 20),
+                child: CajaError(
+                  'no hay ninguna parada que contenga «${_ctrl.text.trim()}». '
+                  'Revisa cómo está escrito (las tildes no importan) o borra '
+                  'la búsqueda para ver todas las paradas.',
                 ),
               ),
             for (final p in lista)
               FilaNavegable(
                 titulo: p.nombre,
                 subtitulo:
-                    'Líneas: ${lineasDeParada(p.id).map((l) => l.id.substring(1)).join(', ')}',
+                    'Líneas: ${lineasDeParada(p.id).map((l) => l.id).join(', ')}',
                 etiqueta:
                     'Parada ${p.nombre}. Líneas '
                     '${lineasDeParada(p.id).map((l) => l.id.substring(1)).join(', ')}. '

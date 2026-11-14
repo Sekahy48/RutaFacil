@@ -6,6 +6,7 @@ import '../../data/datos_mock.dart';
 import '../../data/planificador.dart';
 import '../../estado.dart';
 import '../comunes.dart';
+import '../tema.dart';
 import 'p7_seguimiento.dart';
 
 class PantallaBuscar extends StatefulWidget {
@@ -99,24 +100,29 @@ class _PantallaBuscarState extends State<PantallaBuscar> {
     setState(() {
       _limpiarResultados();
       if (origen == null) {
-        _errorOrigen = 'Elige una parada de origen de la lista.';
+        _errorOrigen = _mensajeNoEncontrada(_ctrlOrigen.text, 'origen');
       }
       if (destino == null) {
-        _errorDestino = 'Elige una parada de destino de la lista.';
+        _errorDestino = _mensajeNoEncontrada(_ctrlDestino.text, 'destino');
       }
       if (origen != null && destino != null && origen.id == destino.id) {
         _errorGeneral =
-            'Error: origen y destino son la misma parada. Cambia el destino.';
-        _errorDestino = 'Es la misma parada que el origen.';
+            'origen y destino son la misma parada. Cambia el destino por '
+            'otra parada.';
+        _errorDestino =
+            'es la misma parada que el origen. Escribe y elige otra parada.';
       }
     });
 
     final hayError =
         _errorOrigen != null || _errorDestino != null || _errorGeneral != null;
     if (hayError) {
-      final mensaje =
-          _errorGeneral ??
-          [_errorOrigen, _errorDestino].whereType<String>().join(' ');
+      final mensaje = _errorGeneral != null
+          ? 'Error: $_errorGeneral'
+          : [
+              if (_errorOrigen != null) 'Error en origen: $_errorOrigen',
+              if (_errorDestino != null) 'Error en destino: $_errorDestino',
+            ].join(' ');
       anunciar(context, mensaje);
       // Foco al campo que hay que corregir.
       (_errorOrigen != null ? _focoOrigen : _focoDestino).requestFocus();
@@ -132,6 +138,17 @@ class _PantallaBuscarState extends State<PantallaBuscar> {
           : '${_textoEncontrados(res.length)}. El más rápido tarda '
                 '${res.first.duracion} minutos.',
     );
+  }
+
+  /// Qué ha pasado y cómo corregirlo (sin el prefijo «Error:»).
+  String _mensajeNoEncontrada(String texto, String campo) {
+    final t = texto.trim();
+    if (t.isEmpty) {
+      return 'no has escrito el $campo. Escribe parte del nombre y elige '
+          'una parada de la lista.';
+    }
+    return '«$t» no es una parada de la lista. Escribe parte del nombre y '
+        'elige una de las sugerencias.';
   }
 
   String _textoEncontrados(int n) =>
@@ -153,7 +170,6 @@ class _PantallaBuscarState extends State<PantallaBuscar> {
   @override
   Widget build(BuildContext context) {
     final tt = Theme.of(context).textTheme;
-    final esquema = Theme.of(context).colorScheme;
 
     return Pantalla(
       titulo: 'Buscar ruta',
@@ -165,41 +181,15 @@ class _PantallaBuscarState extends State<PantallaBuscar> {
             const SizedBox(height: 20),
             _campo(_Campo.destino),
             if (_errorGeneral != null) ...[
-              const SizedBox(height: 16),
-              Semantics(
-                liveRegion: true,
-                child: Caja(
-                  grosor: 3,
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ExcludeSemantics(
-                        child: Icon(
-                          Icons.error_outline,
-                          size: 28,
-                          color: esquema.onSurface,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Text(
-                          _errorGeneral!,
-                          style: tt.bodyLarge?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+              const SizedBox(height: 2 * kEspacio),
+              CajaError(_errorGeneral!),
             ],
             const SizedBox(height: 24),
             FilledButton(
               focusNode: _focoBoton,
               onPressed: _buscar,
               style: FilledButton.styleFrom(
-                minimumSize: const Size.fromHeight(64),
+                minimumSize: const Size.fromHeight(kAltoBotonPrincipal),
               ),
               child: const Text('Buscar trayecto', textAlign: TextAlign.center),
             ),
@@ -208,7 +198,9 @@ class _PantallaBuscarState extends State<PantallaBuscar> {
               'Horarios teóricos desde las ${hhmm(minutoReferencia())} '
               '(sin tiempo real). Datos de ejemplo.',
               textAlign: TextAlign.center,
-              style: tt.bodyMedium?.copyWith(color: esquema.onSurfaceVariant),
+              style: tt.bodyMedium?.copyWith(
+                color: context.paleta.textoSecundario,
+              ),
             ),
             const SizedBox(height: 20),
             ..._zonaResultados(),
@@ -235,10 +227,12 @@ class _PantallaBuscarState extends State<PantallaBuscar> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        TextField(
+        CampoTexto(
+          etiqueta: etiqueta,
           controller: ctrl,
           focusNode: foco,
-          style: tt.bodyLarge,
+          pista: 'Escribe o elige una parada',
+          error: error,
           textInputAction: TextInputAction.next,
           onChanged: (_) => setState(_limpiarResultados),
           onSubmitted: (_) {
@@ -247,35 +241,17 @@ class _PantallaBuscarState extends State<PantallaBuscar> {
               _elegirSugerencia(campo, s.first);
             }
           },
-          decoration: InputDecoration(
-            labelText: etiqueta,
-            floatingLabelBehavior: FloatingLabelBehavior.always,
-            labelStyle: tt.titleMedium,
-            hintText: 'Escribe o elige una parada',
-            errorText: error,
-            errorMaxLines: 4,
-            suffixIcon: ctrl.text.isEmpty
-                ? null
-                : IconButton(
-                    tooltip: 'Borrar $etiqueta',
-                    style: IconButton.styleFrom(
-                      side: BorderSide.none,
-                      backgroundColor: Colors.transparent,
-                    ),
-                    icon: const Icon(Icons.close),
-                    onPressed: () {
-                      setState(() {
-                        ctrl.clear();
-                        _limpiarResultados();
-                      });
-                      foco.requestFocus();
-                    },
-                  ),
-          ),
+          onBorrar: () {
+            setState(() {
+              ctrl.clear();
+              _limpiarResultados();
+            });
+            foco.requestFocus();
+          },
         ),
         if (sugerencias.isNotEmpty)
           Padding(
-            padding: const EdgeInsets.only(top: 4),
+            padding: const EdgeInsets.only(top: kEspacio),
             child: Caja(
               padding: EdgeInsets.zero,
               child: Column(
@@ -289,13 +265,14 @@ class _PantallaBuscarState extends State<PantallaBuscar> {
                           'Elegir ${p.nombre} como ${etiqueta.toLowerCase()}',
                       onTap: () => _elegirSugerencia(campo, p),
                       excludeSemantics: true,
-                      child: InkWell(
+                      child: Tocable(
                         onTap: () => _elegirSugerencia(campo, p),
+                        anilloDentro: true,
                         child: Container(
                           constraints: const BoxConstraints(minHeight: 52),
                           alignment: Alignment.centerLeft,
                           padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
+                            horizontal: 2 * kEspacio,
                             vertical: 10,
                           ),
                           child: Row(
@@ -320,7 +297,6 @@ class _PantallaBuscarState extends State<PantallaBuscar> {
 
   List<Widget> _zonaResultados() {
     final tt = Theme.of(context).textTheme;
-    final esquema = Theme.of(context).colorScheme;
     final res = _resultados;
 
     if (res == null) {
@@ -333,7 +309,7 @@ class _PantallaBuscarState extends State<PantallaBuscar> {
         Text(
           'Aún no hay trayectos. Elige origen y destino.',
           textAlign: TextAlign.center,
-          style: tt.bodyLarge?.copyWith(color: esquema.onSurfaceVariant),
+          style: tt.bodyLarge?.copyWith(color: context.paleta.textoSecundario),
         ),
       ];
     }
@@ -371,7 +347,13 @@ class _PantallaBuscarState extends State<PantallaBuscar> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text('Opción $n · ${t.nombreLineas}', style: tt.titleMedium),
-        const SizedBox(height: 4),
+        const SizedBox(height: kEspacio),
+        Wrap(
+          spacing: kEspacio,
+          runSpacing: 4,
+          children: [for (final tr in t.tramos) EtiquetaLinea(tr.linea.id)],
+        ),
+        const SizedBox(height: kEspacio),
         Text(detalle, style: tt.bodyLarge),
         const SizedBox(height: 4),
         Text(horas, style: tt.bodyMedium),
