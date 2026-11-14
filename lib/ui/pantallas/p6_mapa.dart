@@ -1,8 +1,13 @@
 // P6 · Mapa interactivo de la zona de prueba (teselas OpenStreetMap).
 // Los gestos funcionan, pero todo se puede hacer también con botones.
+//
+// En el tema de alto contraste las mismas teselas de OSM se oscurecen en el
+// propio dispositivo con un ColorFiltered (opción A de la semana 4): mismo
+// proveedor, misma atribución y mismo comportamiento sin conexión.
 
 import 'dart:async';
 import 'dart:io';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -11,6 +16,7 @@ import 'package:latlong2/latlong.dart';
 import '../../data/datos_mock.dart';
 import '../../estado.dart';
 import '../comunes.dart';
+import '../tema.dart';
 import 'p5_detalle_parada.dart';
 
 /// Zona de prueba: la cámara no puede salir de aquí.
@@ -30,15 +36,68 @@ final _opciones = MapOptions(
   interactionOptions: const InteractionOptions(
     flags: InteractiveFlag.all & ~InteractiveFlag.rotate,
   ),
+  // El fondo lo pone el ColoredBox que envuelve al mapa (color del tema).
+  backgroundColor: Colors.transparent,
 );
 
 /// Posición SIMULADA del usuario (no se usa el GPS en este prototipo).
 const _ubicacionSimulada = LatLng(42.6008, -5.5688);
 
+/// Matriz de color que oscurece las teselas en alto contraste: baja la
+/// saturación, invierte y ajusta el brillo. Resultado: fondo casi negro,
+/// calles oscuras y rótulos claros.
+List<double> matrizMapaOscuro({
+  double saturacion = kMapaOscuroSaturacion,
+  double escala = kMapaOscuroEscala,
+  double desplazamiento = kMapaOscuroDesplazamiento,
+}) {
+  const lr = 0.2126, lg = 0.7152, lb = 0.0722;
+  final g = 1 - saturacion;
+  final d = [
+    [lr * g + saturacion, lg * g, lb * g],
+    [lr * g, lg * g + saturacion, lb * g],
+    [lr * g, lg * g, lb * g + saturacion],
+  ];
+  return [
+    for (final fila in d) ...[
+      -escala * fila[0],
+      -escala * fila[1],
+      -escala * fila[2],
+      0,
+      escala * 255 + desplazamiento,
+    ],
+    0, 0, 0, 1, 0, //
+  ];
+}
+
+/// Estilo del nombre dentro del pin.
+TextStyle get _estiloPin => kEstiloEtiqueta.copyWith(color: kPinTexto);
+
+/// Tamaño del pin: crece con el texto (sin límite de escala), ≥ 48 dp.
+Size _tamPin(String texto, TextScaler escala, {double extra = 0}) {
+  final tp = TextPainter(
+    text: TextSpan(text: texto, style: _estiloPin),
+    textDirection: TextDirection.ltr,
+    textScaler: escala,
+    maxLines: 1,
+  )..layout();
+  final tam = Size(
+    math.max(kTactilMinimo, tp.width + extra + 2 * 12 + 2 * kBorde + 2),
+    math.max(kTactilMinimo, tp.height + 2 * kEspacio + 2 * kBorde),
+  );
+  tp.dispose();
+  return tam;
+}
+
 enum _Conexion { comprobando, ok, sinConexion }
 
 class PantallaMapa extends StatefulWidget {
   const PantallaMapa({super.key});
+
+  /// Solo para pruebas: si no es null, sustituye la comprobación de red
+  /// (true = hay conexión, false = sin conexión).
+  @visibleForTesting
+  static bool? conexionParaPruebas;
 
   @override
   State<PantallaMapa> createState() => _PantallaMapaState();
@@ -70,6 +129,21 @@ class _PantallaMapaState extends State<PantallaMapa> {
 
   Future<void> _comprobarConexion() async {
     var ok = false;
+    final simulada = PantallaMapa.conexionParaPruebas;
+    if (simulada != null) {
+      ok = simulada;
+    } else {
+      ok = await _hayRed();
+    }
+    if (!mounted) return;
+    setState(() {
+      _erroresTesela = 0;
+      _conexion = ok ? _Conexion.ok : _Conexion.sinConexion;
+    });
+  }
+
+  Future<bool> _hayRed() async {
+    var ok = false;
     try {
       final r = await InternetAddress.lookup('tile.openstreetmap.org')
           .timeout(const Duration(seconds: 4));
@@ -77,11 +151,7 @@ class _PantallaMapaState extends State<PantallaMapa> {
     } on Exception {
       ok = false;
     }
-    if (!mounted) return;
-    setState(() {
-      _erroresTesela = 0;
-      _conexion = ok ? _Conexion.ok : _Conexion.sinConexion;
-    });
+    return ok;
   }
 
   void _errorTesela(TileImage tile, Object error, StackTrace? st) {
@@ -187,57 +257,77 @@ class _PantallaMapaState extends State<PantallaMapa> {
   }
 
   Widget _construirMapa() {
+    final p = context.paleta;
+    final escala = MediaQuery.textScalerOf(context);
+    Widget teselas = TileLayer(
+      urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+      userAgentPackageName: 'es.unileon.rutafacil',
+      errorTileCallback: _errorTesela,
+    );
+    if (p.altoContraste) {
+      teselas = ColorFiltered(
+        colorFilter: ColorFilter.matrix(matrizMapaOscuro()),
+        child: teselas,
+      );
+    }
+    final tamUbicacion = _tamPin('Tú (simulado)', escala, extra: 24);
     return Semantics(
       container: true,
       label:
           'Mapa de la zona con ${kParadas.length} paradas. '
           'Toca una parada para ver sus horarios.',
-      child: FlutterMap(
-        mapController: _mapa,
-        options: _opciones,
-        children: [
-          TileLayer(
-            urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-            userAgentPackageName: 'es.unileon.rutafacil',
-            errorTileCallback: _errorTesela,
-          ),
-          MarkerLayer(
-            markers: [
-              if (_mostrarUbicacion)
-                const Marker(
-                  point: _ubicacionSimulada,
-                  width: 120,
-                  height: 56,
-                  child: _MarcaUbicacion(),
-                ),
-              for (final p in kParadas)
-                Marker(
-                  point: p.posicion,
-                  width: 36.0 + p.nombre.length * 11,
-                  height: 52,
-                  child: _Pin(parada: p, onTap: () => _abrirParada(p)),
-                ),
-            ],
-          ),
-          const _Atribucion(),
-        ],
+      child: ColoredBox(
+        color: p.mapa,
+        child: FlutterMap(
+          mapController: _mapa,
+          options: _opciones,
+          children: [
+            teselas,
+            MarkerLayer(
+              markers: [
+                if (_mostrarUbicacion)
+                  Marker(
+                    point: _ubicacionSimulada,
+                    width: tamUbicacion.width,
+                    height: tamUbicacion.height,
+                    child: const _MarcaUbicacion(),
+                  ),
+                for (final parada in kParadas)
+                  Marker(
+                    point: parada.posicion,
+                    width: _tamPin(parada.nombre, escala).width,
+                    height: _tamPin(parada.nombre, escala).height,
+                    child: _Pin(
+                      parada: parada,
+                      onTap: () => _abrirParada(parada),
+                    ),
+                  ),
+              ],
+            ),
+            const _Atribucion(),
+          ],
+        ),
       ),
     );
   }
 
   Widget _construirControles() {
-    final esquema = Theme.of(context).colorScheme;
+    final p = context.paleta;
+    // Cada icono lleva un nombre inequívoco: tooltip (al mantener pulsado)
+    // y la misma etiqueta para TalkBack.
     Widget boton(IconData icono, String etiqueta, VoidCallback onTap) =>
         IconButton(
           onPressed: onTap,
           tooltip: etiqueta,
-          icon: Icon(icono, size: 28),
+          icon: Icon(icono, size: 28, semanticLabel: etiqueta),
         );
 
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: esquema.surface,
-        border: Border(top: BorderSide(color: esquema.outline, width: 1.5)),
+        color: p.fondo,
+        border: Border(
+          top: BorderSide(color: p.borde, width: kBorde),
+        ),
       ),
       child: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
@@ -246,36 +336,39 @@ class _PantallaMapaState extends State<PantallaMapa> {
           children: [
             Wrap(
               alignment: WrapAlignment.center,
-              spacing: 8,
-              runSpacing: 8,
+              spacing: kEspacio,
+              runSpacing: kEspacio,
               children: [
                 boton(Icons.add, 'Acercar', () => _zoom(1)),
                 boton(Icons.remove, 'Alejar', () => _zoom(-1)),
                 boton(
                   Icons.arrow_back,
-                  'Mover el mapa a la izquierda',
+                  'Desplazar mapa a la izquierda',
                   () => _mover(-1, 0),
                 ),
                 boton(
                   Icons.arrow_upward,
-                  'Mover el mapa hacia arriba',
+                  'Desplazar mapa hacia arriba',
                   () => _mover(0, 1),
                 ),
                 boton(
                   Icons.arrow_downward,
-                  'Mover el mapa hacia abajo',
+                  'Desplazar mapa hacia abajo',
                   () => _mover(0, -1),
                 ),
                 boton(
                   Icons.arrow_forward,
-                  'Mover el mapa a la derecha',
+                  'Desplazar mapa a la derecha',
                   () => _mover(1, 0),
                 ),
               ],
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 2 * kEspacio),
             FilledButton(
               onPressed: () => estado.irA(Pestana.paradas),
+              style: FilledButton.styleFrom(
+                minimumSize: const Size.fromHeight(kAltoBotonPrincipal),
+              ),
               child: const Text('Ver como lista'),
             ),
             const SizedBox(height: 12),
@@ -290,7 +383,8 @@ class _PantallaMapaState extends State<PantallaMapa> {
   }
 }
 
-/// Pin de parada: botón ≥ 48 dp con el nombre.
+/// Pin de parada: botón ≥ 48 dp con el nombre dentro. Fondo #F8F8F6 y
+/// borde de 2 dp en los dos temas; crece con el texto.
 class _Pin extends StatelessWidget {
   const _Pin({required this.parada, required this.onTap});
 
@@ -299,40 +393,22 @@ class _Pin extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final esquema = Theme.of(context).colorScheme;
-    // El tamaño del pin es fijo: se limita la escala del texto y se ajusta.
-    return MediaQuery.withClampedTextScaling(
-      maxScaleFactor: 1.3,
-      child: Semantics(
-        container: true,
-        button: true,
-        label: 'Parada ${parada.nombre}, abrir detalle',
-        onTap: onTap,
-        excludeSemantics: true,
-        child: Material(
-          color: esquema.surfaceContainerLowest,
-          shape: StadiumBorder(
-            side: BorderSide(color: esquema.outline, width: 2.5),
-          ),
-          child: InkWell(
-            customBorder: const StadiumBorder(),
-            onTap: onTap,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: Center(
-                child: FittedBox(
-                  fit: BoxFit.scaleDown,
-                  child: Text(
-                    parada.nombre,
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: esquema.onSurface,
-                    ),
-                  ),
-                ),
-              ),
-            ),
+    return Semantics(
+      container: true,
+      button: true,
+      label: 'Parada ${parada.nombre}, abrir detalle',
+      onTap: onTap,
+      excludeSemantics: true,
+      child: Material(
+        color: kPinFondo,
+        shape: const RoundedRectangleBorder(
+          borderRadius: kRadioBorde,
+          side: BorderSide(color: kPinBorde, width: kBorde),
+        ),
+        child: Tocable(
+          onTap: onTap,
+          child: Center(
+            child: Text(parada.nombre, maxLines: 1, style: _estiloPin),
           ),
         ),
       ),
@@ -345,37 +421,28 @@ class _MarcaUbicacion extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final esquema = Theme.of(context).colorScheme;
-    return MediaQuery.withClampedTextScaling(
-      maxScaleFactor: 1.3,
-      child: Semantics(
-        label: 'Tu ubicación (simulada)',
-        excludeSemantics: true,
-        child: Container(
-          decoration: BoxDecoration(
-            color: esquema.primary,
-            borderRadius: BorderRadius.circular(8),
-          ),
-          padding: const EdgeInsets.symmetric(horizontal: 6),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.my_location, color: esquema.onPrimary, size: 20),
-              const SizedBox(width: 4),
-              Flexible(
-                child: FittedBox(
-                  fit: BoxFit.scaleDown,
-                  child: Text(
-                    'Tú (simulado)',
-                    style: TextStyle(
-                      color: esquema.onPrimary,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
+    final p = context.paleta;
+    return Semantics(
+      label: 'Tu ubicación (simulada)',
+      excludeSemantics: true,
+      child: Container(
+        decoration: BoxDecoration(
+          color: p.acento,
+          borderRadius: kRadioBorde,
+          border: Border.all(color: p.sobreAcento, width: kBorde),
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: kEspacio),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.my_location, color: p.sobreAcento, size: 20),
+            const SizedBox(width: 4),
+            Text(
+              'Tú (simulado)',
+              maxLines: 1,
+              style: kEstiloEtiqueta.copyWith(color: p.sobreAcento),
+            ),
+          ],
         ),
       ),
     );
@@ -388,14 +455,15 @@ class _Atribucion extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final p = context.paleta;
     return Align(
       alignment: Alignment.bottomRight,
       child: Container(
-        color: Colors.white,
+        color: p.superficie,
         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-        child: const Text(
+        child: Text(
           '© OpenStreetMap contributors',
-          style: TextStyle(color: Colors.black, fontSize: 13),
+          style: kEstiloPequeno.copyWith(color: p.texto),
         ),
       ),
     );
@@ -410,17 +478,20 @@ class _SinConexion extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tt = Theme.of(context).textTheme;
+    final p = context.paleta;
     return ListView(
       padding: const EdgeInsets.all(20),
       children: [
         Semantics(
           liveRegion: true,
           child: Caja(
-            grosor: 3,
+            grosor: kBordeEstado,
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const ExcludeSemantics(child: Icon(Icons.cloud_off, size: 32)),
+                ExcludeSemantics(
+                  child: Icon(Icons.cloud_off, size: 32, color: p.texto),
+                ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
@@ -435,6 +506,9 @@ class _SinConexion extends StatelessWidget {
         const SizedBox(height: 20),
         FilledButton(
           onPressed: () => estado.irA(Pestana.paradas),
+          style: FilledButton.styleFrom(
+            minimumSize: const Size.fromHeight(kAltoBotonPrincipal),
+          ),
           child: const Text('Ver lista de paradas'),
         ),
         const SizedBox(height: 12),
