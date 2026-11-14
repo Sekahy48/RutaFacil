@@ -48,11 +48,18 @@ const kAltoAvisoBorde = Color(0xFFE8D27F);
 const kAltoPestanaInactiva = Color(0xFF121214);
 const kAltoMapa = Color(0xFF121214);
 
-/// Pin del mapa: siempre claro (fondo #F8F8F6), también en alto contraste,
-/// donde destaca sobre el mapa oscurecido.
-const kPinFondo = kNormalSuperficie;
-const kPinTexto = kNormalTexto;
-const kPinBorde = kNormalTexto;
+/// Pines (etiquetas de parada) del mapa. Son alias de los colores de cada
+/// tema (sin hex nuevos):
+///  - normal: claros (superficie) con texto y borde oscuros de 2 dp;
+///  - alto contraste: fondo AC con texto AC y borde de acento de 3 dp.
+const kNormalPinFondo = kNormalSuperficie;
+const kNormalPinTexto = kNormalTexto;
+const kNormalPinBorde = kNormalTexto;
+const double kNormalPinGrosor = kBorde;
+const kAltoPinFondo = kAltoFondo;
+const kAltoPinTexto = kAltoTexto;
+const kAltoPinBorde = kAltoAcento;
+const double kAltoPinGrosor = kBordeEstado;
 
 /// Oscurecimiento de las teselas del mapa en alto contraste (P6): saturación
 /// que se conserva (0 = gris), factor tras invertir y desplazamiento de brillo
@@ -162,6 +169,10 @@ class Paleta extends ThemeExtension<Paleta> {
     required this.avisoBorde,
     required this.pestanaInactiva,
     required this.mapa,
+    required this.pinFondo,
+    required this.pinTexto,
+    required this.pinBorde,
+    required this.pinGrosor,
   });
 
   final bool altoContraste;
@@ -179,6 +190,12 @@ class Paleta extends ThemeExtension<Paleta> {
   final Color avisoBorde;
   final Color pestanaInactiva;
   final Color mapa;
+
+  /// Pin (etiqueta de parada) del mapa.
+  final Color pinFondo;
+  final Color pinTexto;
+  final Color pinBorde;
+  final double pinGrosor;
 
   /// Opacidad del estado desactivado (atenuado; WCAG no exige contraste
   /// a los controles desactivados, que además se anuncian «no disponible»).
@@ -209,6 +226,10 @@ const kPaletaNormal = Paleta(
   avisoBorde: kNormalAvisoBorde,
   pestanaInactiva: kNormalPestanaInactiva,
   mapa: kNormalMapa,
+  pinFondo: kNormalPinFondo,
+  pinTexto: kNormalPinTexto,
+  pinBorde: kNormalPinBorde,
+  pinGrosor: kNormalPinGrosor,
 );
 
 const kPaletaAltoContraste = Paleta(
@@ -227,6 +248,10 @@ const kPaletaAltoContraste = Paleta(
   avisoBorde: kAltoAvisoBorde,
   pestanaInactiva: kAltoPestanaInactiva,
   mapa: kAltoMapa,
+  pinFondo: kAltoPinFondo,
+  pinTexto: kAltoPinTexto,
+  pinBorde: kAltoPinBorde,
+  pinGrosor: kAltoPinGrosor,
 );
 
 extension PaletaDeContexto on BuildContext {

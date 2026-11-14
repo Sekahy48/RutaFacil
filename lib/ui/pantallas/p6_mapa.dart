@@ -70,11 +70,16 @@ List<double> matrizMapaOscuro({
   ];
 }
 
-/// Estilo del nombre dentro del pin.
-TextStyle get _estiloPin => kEstiloEtiqueta.copyWith(color: kPinTexto);
+/// Estilo del nombre dentro del pin (el color lo pone la paleta del tema).
+const _estiloPin = kEstiloEtiqueta;
 
 /// Tamaño del pin: crece con el texto (sin límite de escala), ≥ 48 dp.
-Size _tamPin(String texto, TextScaler escala, {double extra = 0}) {
+Size _tamPin(
+  String texto,
+  TextScaler escala, {
+  double extra = 0,
+  double grosor = kBorde,
+}) {
   final tp = TextPainter(
     text: TextSpan(text: texto, style: _estiloPin),
     textDirection: TextDirection.ltr,
@@ -82,8 +87,8 @@ Size _tamPin(String texto, TextScaler escala, {double extra = 0}) {
     maxLines: 1,
   )..layout();
   final tam = Size(
-    math.max(kTactilMinimo, tp.width + extra + 2 * 12 + 2 * kBorde + 2),
-    math.max(kTactilMinimo, tp.height + 2 * kEspacio + 2 * kBorde),
+    math.max(kTactilMinimo, tp.width + extra + 2 * 12 + 2 * grosor + 2),
+    math.max(kTactilMinimo, tp.height + 2 * kEspacio + 2 * grosor),
   );
   tp.dispose();
   return tam;
@@ -302,8 +307,16 @@ class _PantallaMapaState extends State<PantallaMapa> {
                 for (final parada in kParadas)
                   Marker(
                     point: parada.posicion,
-                    width: _tamPin(parada.nombre, escala).width,
-                    height: _tamPin(parada.nombre, escala).height,
+                    width: _tamPin(
+                      parada.nombre,
+                      escala,
+                      grosor: p.pinGrosor,
+                    ).width,
+                    height: _tamPin(
+                      parada.nombre,
+                      escala,
+                      grosor: p.pinGrosor,
+                    ).height,
                     child: _Pin(
                       parada: parada,
                       onTap: () => _abrirParada(parada),
@@ -389,8 +402,10 @@ class _PantallaMapaState extends State<PantallaMapa> {
   }
 }
 
-/// Pin de parada: botón ≥ 48 dp con el nombre dentro. Fondo #F8F8F6 y
-/// borde de 2 dp en los dos temas; crece con el texto.
+/// Pin de parada: botón ≥ 48 dp con el nombre dentro. Colores y grosor de
+/// borde salen de la paleta del tema (normal: claro con borde oscuro de 2 dp;
+/// alto contraste: fondo AC, texto AC y borde de acento de 3 dp). El foco es
+/// el anillo de 3 dp de [Tocable]. Crece con el texto.
 class _Pin extends StatelessWidget {
   const _Pin({required this.parada, required this.onTap});
 
@@ -399,6 +414,7 @@ class _Pin extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final p = context.paleta;
     return Semantics(
       container: true,
       button: true,
@@ -406,15 +422,19 @@ class _Pin extends StatelessWidget {
       onTap: onTap,
       excludeSemantics: true,
       child: Material(
-        color: kPinFondo,
-        shape: const RoundedRectangleBorder(
+        color: p.pinFondo,
+        shape: RoundedRectangleBorder(
           borderRadius: kRadioBorde,
-          side: BorderSide(color: kPinBorde, width: kBorde),
+          side: BorderSide(color: p.pinBorde, width: p.pinGrosor),
         ),
         child: Tocable(
           onTap: onTap,
           child: Center(
-            child: Text(parada.nombre, maxLines: 1, style: _estiloPin),
+            child: Text(
+              parada.nombre,
+              maxLines: 1,
+              style: _estiloPin.copyWith(color: p.pinTexto),
+            ),
           ),
         ),
       ),
