@@ -47,6 +47,13 @@ ESPERADOS = {
     "kAltoFoco": "E8D27F",
     "kAltoError": "FF9E9E",
     "kAltoExito": "8DF0A0",
+    # Pines del mapa (alias de los anteriores, sin hex nuevos).
+    "kNormalPinFondo": "F8F8F6",
+    "kNormalPinTexto": "1B1F23",
+    "kNormalPinBorde": "1B1F23",
+    "kAltoPinFondo": "121214",
+    "kAltoPinTexto": "F2F2F2",
+    "kAltoPinBorde": "E8D27F",
 }
 
 # (id, uso, constante primer plano, constante fondo, mínimo)
@@ -67,18 +74,30 @@ PARES = [
     ("N14", "Foco / fondo", "kNormalFoco", "kNormalFondo", 3.0),
     ("N15", "Borde aviso / fondo aviso", "kNormalAvisoBorde", "kNormalAvisoFondo", 3.0),
     ("N16", "Acento (opción elegida) / superficie", "kNormalAcento", "kNormalSuperficie", 3.0),
+    ("N17", "Pin: texto / fondo del pin", "kNormalPinTexto", "kNormalPinFondo", 4.5),
+    ("N18", "Pin: borde / fondo del mapa (sin teselas)", "kNormalPinBorde", "kNormalMapa", 3.0),
     ("A01", "AC · Texto / fondo", "kAltoTexto", "kAltoFondo", 4.5),
     ("A02", "AC · Texto secundario / fondo", "kAltoTextoSecundario", "kAltoFondo", 4.5),
     ("A03", "AC · Acento (botones, bordes, foco, texto de botón) / fondo", "kAltoAcento", "kAltoFondo", 4.5),
     ("A04", "AC · Texto sobre acento / acento", "kAltoSobreAcento", "kAltoAcento", 4.5),
     ("A05", "AC · Error / fondo", "kAltoError", "kAltoFondo", 4.5),
     ("A06", "AC · Éxito / fondo", "kAltoExito", "kAltoFondo", 4.5),
+    ("A07", "AC · Pin: texto / fondo del pin", "kAltoPinTexto", "kAltoPinFondo", 4.5),
+    ("A08", "AC · Pin: borde y foco (acento) / fondo del pin", "kAltoPinBorde", "kAltoPinFondo", 3.0),
+    ("A09", "AC · Pin: borde / fondo del mapa (sin teselas)", "kAltoPinBorde", "kAltoMapa", 3.0),
 ]
 
 
 def leer_colores(ruta: Path) -> dict:
+    texto = ruta.read_text(encoding="utf-8")
     patron = re.compile(r"^const\s+(k(?:Normal|Alto)\w+)\s*=\s*Color\(0x[0-9A-Fa-f]{2}([0-9A-Fa-f]{6})\);", re.M)
-    return {n: h.upper() for n, h in patron.findall(ruta.read_text(encoding="utf-8"))}
+    colores = {n: h.upper() for n, h in patron.findall(texto)}
+    # Alias: `const kAltoPinFondo = kAltoFondo;`
+    alias = re.compile(r"^const\s+(k(?:Normal|Alto)\w+)\s*=\s*(k\w+);", re.M)
+    for nombre, origen in alias.findall(texto):
+        if origen in colores:
+            colores[nombre] = colores[origen]
+    return colores
 
 
 def lineal(c: float) -> float:

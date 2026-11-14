@@ -15,9 +15,14 @@ N13,Borde / superficie,#6A7178,#F8F8F6,4.65,3,PASS
 N14,Foco / fondo,#1A4FB5,#F1F1EE,6.56,3,PASS
 N15,Borde aviso / fondo aviso,#8A5A00,#FFF1CC,5.28,3,PASS
 N16,Acento (opción elegida) / superficie,#2C5F6F,#F8F8F6,6.64,3,PASS
+N17,Pin: texto / fondo del pin,#1B1F23,#F8F8F6,15.59,4.5,PASS
+N18,Pin: borde / fondo del mapa (sin teselas),#1B1F23,#E8E8E4,13.49,3,PASS
 A01,AC · Texto / fondo,#F2F2F2,#121214,16.71,4.5,PASS
 A02,AC · Texto secundario / fondo,#D4D4D4,#121214,12.62,4.5,PASS
 A03,"AC · Acento (botones, bordes, foco, texto de botón) / fondo",#E8D27F,#121214,12.43,4.5,PASS
 A04,AC · Texto sobre acento / acento,#121214,#E8D27F,12.43,4.5,PASS
 A05,AC · Error / fondo,#FF9E9E,#121214,9.48,4.5,PASS
 A06,AC · Éxito / fondo,#8DF0A0,#121214,13.46,4.5,PASS
+A07,AC · Pin: texto / fondo del pin,#F2F2F2,#121214,16.71,4.5,PASS
+A08,AC · Pin: borde y foco (acento) / fondo del pin,#E8D27F,#121214,12.43,3,PASS
+A09,AC · Pin: borde / fondo del mapa (sin teselas),#E8D27F,#121214,12.43,3,PASS
