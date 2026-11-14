@@ -72,8 +72,13 @@ la red: usa `PantallaMapa.conexionParaPruebas`.
   y registro (según su repositorio oficial basemap-styles, consultado en noviembre de 2026); así se mantienen el mismo
   proveedor, la misma atribución y el mismo comportamiento sin conexión; y no añade
   dependencias. Contraste aproximado medido sobre las capturas:
-  - alto contraste: el pin claro sobre el mapa oscuro, entre 6,8:1 (zonas más claras
-    del mapa, percentil 95) y 17:1;
+  - alto contraste: los pines usan los colores del tema de alto contraste (fondo
+    `#121214`, texto `#F2F2F2`, borde de acento `#E8D27F` de 3 dp). El texto, sobre el
+    fondo opaco del pin, da 16,7:1. El borde de acento sobre el mapa da 4,96:1 en el
+    95 % de los píxeles del mapa; solo baja de 3:1 en el 1 % más claro (rótulos
+    invertidos), y ahí el fondo oscuro del pin contrasta ≥ 4,4:1. Para cualquier
+    píxel del mapa, el borde o el fondo del pin contrastan al menos 3,5:1, así que el
+    contorno siempre se distingue;
   - tema normal: el borde oscuro del pin sobre el mapa, ≥ 8:1.
 
   La atribución de OSM va en una franja propia bajo el mapa, así que no tapa pines.
@@ -81,7 +86,7 @@ la red: usa `PantallaMapa.conexionParaPruebas`.
 ## Scripts (`docs/scripts/`)
 
 - `python docs/scripts/contrastes.py`: sin dependencias. Lee los hex de `tema.dart`,
-  calcula el contraste WCAG 2.2 de 22 pares de uso (16 del tema normal y 6 del de alto
+  calcula el contraste WCAG 2.2 de 27 pares de uso (18 del tema normal y 9 del de alto
   contraste) y escribe `docs/contrastes_app.csv`. Avisa si algún hex no coincide con la
   especificación o si algún par da FAIL; en ese caso termina con código 1.
 - `python docs/scripts/simular.py`: necesita `pip install pillow numpy`. A partir de
