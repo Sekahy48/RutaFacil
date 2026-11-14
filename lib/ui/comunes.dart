@@ -249,13 +249,19 @@ class EtiquetaLinea extends StatelessWidget {
     final p = context.paleta;
     return ExcludeSemantics(
       child: Container(
+        // Ancho mínimo común para que «L1» y «L4» alineen igual en las listas.
+        constraints: const BoxConstraints(minWidth: 52),
         padding: const EdgeInsets.symmetric(horizontal: kEspacio, vertical: 2),
         decoration: BoxDecoration(
           color: p.superficie,
           borderRadius: kRadioBorde,
           border: Border.all(color: p.texto, width: kBorde),
         ),
-        child: Text(idLinea, style: kEstiloEtiqueta.copyWith(color: p.texto)),
+        child: Text(
+          idLinea,
+          textAlign: TextAlign.center,
+          style: kEstiloEtiqueta.copyWith(color: p.texto),
+        ),
       ),
     );
   }
@@ -473,6 +479,7 @@ class CampoTexto extends StatelessWidget {
             onSubmitted: onSubmitted,
             decoration: InputDecoration(
               hintText: pista,
+              hintMaxLines: 3,
               error: error == null ? null : LineaError(error!),
               suffixIcon: onBorrar == null || controller.text.isEmpty
                   ? null
