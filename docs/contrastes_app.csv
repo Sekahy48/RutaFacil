@@ -1,0 +1,23 @@
+id,uso,primer_plano,fondo,ratio,minimo,resultado
+N01,Texto / fondo,#1B1F23,#F1F1EE,14.65,4.5,PASS
+N02,Texto / superficie,#1B1F23,#F8F8F6,15.59,4.5,PASS
+N03,Texto secundario / fondo,#444B52,#F1F1EE,7.82,4.5,PASS
+N04,Texto secundario / superficie,#444B52,#F8F8F6,8.32,4.5,PASS
+N05,Superficie (texto sobre acento) / acento,#F8F8F6,#2C5F6F,6.64,4.5,PASS
+N06,Acento (texto de botón secundario) / superficie,#2C5F6F,#F8F8F6,6.64,4.5,PASS
+N07,Error / superficie,#A12626,#F8F8F6,7.00,4.5,PASS
+N08,Éxito / superficie,#1F6B36,#F8F8F6,6.14,4.5,PASS
+N09,Texto / aviso fondo,#1B1F23,#FFF1CC,14.77,4.5,PASS
+N10,Superficie / acento (pestaña activa),#F8F8F6,#2C5F6F,6.64,4.5,PASS
+N11,Texto secundario / pestaña inactiva,#444B52,#E9E9E4,7.26,4.5,PASS
+N12,Borde / fondo,#6A7178,#F1F1EE,4.37,3,PASS
+N13,Borde / superficie,#6A7178,#F8F8F6,4.65,3,PASS
+N14,Foco / fondo,#1A4FB5,#F1F1EE,6.56,3,PASS
+N15,Borde aviso / fondo aviso,#8A5A00,#FFF1CC,5.28,3,PASS
+N16,Acento (opción elegida) / superficie,#2C5F6F,#F8F8F6,6.64,3,PASS
+A01,AC · Texto / fondo,#F2F2F2,#121214,16.71,4.5,PASS
+A02,AC · Texto secundario / fondo,#D4D4D4,#121214,12.62,4.5,PASS
+A03,"AC · Acento (botones, bordes, foco, texto de botón) / fondo",#E8D27F,#121214,12.43,4.5,PASS
+A04,AC · Texto sobre acento / acento,#121214,#E8D27F,12.43,4.5,PASS
+A05,AC · Error / fondo,#FF9E9E,#121214,9.48,4.5,PASS
+A06,AC · Éxito / fondo,#8DF0A0,#121214,13.46,4.5,PASS
