@@ -4,6 +4,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../../alertas.dart';
 import '../../data/datos_mock.dart';
 import '../../data/planificador.dart';
 import '../../estado.dart';
@@ -147,9 +148,10 @@ class _PantallaSeguimientoState extends State<PantallaSeguimiento> {
     }
   }
 
-  /// Vibración (siempre) y sonido (si está activado en Ajustes).
+  /// Vibración (siempre, patrón explícito) y sonido (si está activado en
+  /// Ajustes). La caja de aviso y el anuncio a TalkBack se dan aparte.
   void _alertar() {
-    HapticFeedback.heavyImpact();
+    alertas.vibrarAviso();
     if (estado.sonidoAviso.value) {
       // En Android solo existe el sonido de «clic» del sistema.
       SystemSound.play(SystemSoundType.click);

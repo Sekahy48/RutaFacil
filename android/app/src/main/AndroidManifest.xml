@@ -1,6 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <!-- Teselas del mapa (OpenStreetMap) -->
     <uses-permission android:name="android.permission.INTERNET"/>
+    <!-- Vibración del aviso de bajada en P7 (paquete vibration). -->
+    <uses-permission android:name="android.permission.VIBRATE"/>
     <application
         android:label="RutaFácil"
         android:name="${applicationName}"
