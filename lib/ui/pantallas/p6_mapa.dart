@@ -249,7 +249,14 @@ class _PantallaMapaState extends State<PantallaMapa> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Expanded(flex: 3, child: _construirMapa()),
-            Flexible(flex: 2, child: _construirControles()),
+            // Atribución en su propia franja: nunca tapa un pin.
+            const _Atribucion(),
+            // Con texto grande, el mapa se queda más alto y los controles
+            // (que se pueden desplazar) ocupan menos.
+            Flexible(
+              flex: MediaQuery.textScalerOf(context).scale(10) > 15 ? 1 : 2,
+              child: _construirControles(),
+            ),
           ],
         ),
       },
@@ -304,7 +311,6 @@ class _PantallaMapaState extends State<PantallaMapa> {
                   ),
               ],
             ),
-            const _Atribucion(),
           ],
         ),
       ),
@@ -456,15 +462,13 @@ class _Atribucion extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final p = context.paleta;
-    return Align(
-      alignment: Alignment.bottomRight,
-      child: Container(
-        color: p.superficie,
-        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-        child: Text(
-          '© OpenStreetMap contributors',
-          style: kEstiloPequeno.copyWith(color: p.texto),
-        ),
+    return Container(
+      color: p.superficie,
+      alignment: Alignment.centerRight,
+      padding: const EdgeInsets.symmetric(horizontal: kEspacio, vertical: 2),
+      child: Text(
+        '© OpenStreetMap contributors',
+        style: kEstiloCuerpo.copyWith(color: p.texto),
       ),
     );
   }
