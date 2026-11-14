@@ -14,6 +14,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -214,6 +215,64 @@ void main() {
           await _montar(tester, caso, altoContraste: alto, escalaTexto: 2.0);
           // Un overflow de RenderFlex se notifica como excepción.
           expect(tester.takeException(), isNull);
+        });
+      }
+    }
+  });
+
+  // Pines (etiquetas de parada) del mapa: colores y grosor de la paleta de
+  // cada tema; en alto contraste, tokens AC (fondo AC, texto AC, borde de
+  // acento de 3 dp). Con texto al 200 % el nombre cabe entero.
+  group('Pines del mapa', () {
+    final mapa = _casos.firstWhere((c) => c.nombre == 'P6 mapa');
+
+    for (final alto in [false, true]) {
+      final tema = alto ? 'alto contraste' : 'tema normal';
+      final fondo = alto ? kAltoPinFondo : kNormalPinFondo;
+      final texto = alto ? kAltoPinTexto : kNormalPinTexto;
+      final borde = alto ? kAltoPinBorde : kNormalPinBorde;
+      final grosor = alto ? kAltoPinGrosor : kNormalPinGrosor;
+
+      testWidgets('usan los colores de la paleta · $tema', (tester) async {
+        await _montar(tester, mapa, altoContraste: alto);
+        for (final parada in kParadas) {
+          final nombre = find.text(parada.nombre);
+          expect(nombre, findsOneWidget);
+          expect(tester.widget<Text>(nombre).style?.color, texto);
+          final material = tester.widget<Material>(
+            find.ancestor(of: nombre, matching: find.byType(Material)).first,
+          );
+          expect(material.color, fondo);
+          final forma = material.shape! as RoundedRectangleBorder;
+          expect(forma.side.color, borde);
+          expect(forma.side.width, grosor);
+          expect(forma.borderRadius, kRadioBorde);
+        }
+      });
+
+      for (final escala in [1.0, 2.0]) {
+        testWidgets('el nombre cabe entero y el pin mide ≥ 48 dp · $tema · '
+            'texto ${(escala * 100).round()} %', (tester) async {
+          await _montar(tester, mapa, altoContraste: alto, escalaTexto: escala);
+          expect(tester.takeException(), isNull);
+          for (final parada in kParadas) {
+            final nombre = find.text(parada.nombre);
+            final parrafo = tester.renderObject<RenderParagraph>(nombre);
+            expect(
+              parrafo.didExceedMaxLines,
+              isFalse,
+              reason: '${parada.nombre} se recorta',
+            );
+            final caja = tester.getSize(
+              find.ancestor(of: nombre, matching: find.byType(Material)).first,
+            );
+            expect(caja.width, greaterThanOrEqualTo(kTactilMinimo));
+            expect(caja.height, greaterThanOrEqualTo(kTactilMinimo));
+            expect(
+              parrafo.size.width,
+              lessThanOrEqualTo(caja.width - 2 * grosor),
+            );
+          }
         });
       }
     }
