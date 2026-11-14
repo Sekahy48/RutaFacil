@@ -4,8 +4,6 @@
 // se abran sin perder la barra. El seguimiento (P7) se abre por encima,
 // en el Navigator raíz, y por eso no muestra la barra.
 
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -15,6 +13,8 @@ import 'pantallas/p2_lineas.dart';
 import 'pantallas/p4_paradas.dart';
 import 'pantallas/p6_mapa.dart';
 import 'pantallas/p8_ajustes.dart';
+import 'comunes.dart';
+import 'tema.dart';
 
 class Armazon extends StatefulWidget {
   const Armazon({super.key});
@@ -90,6 +90,9 @@ class _ArmazonState extends State<Armazon> {
   }
 }
 
+/// Barra inferior propia (no NavigationBar): crece con el texto sin límite.
+/// Si las cinco etiquetas no caben en una fila, se reparten en dos filas
+/// (3 + 2) o más, de modo que ninguna palabra se corte ni se recorte.
 class _BarraInferior extends StatelessWidget {
   const _BarraInferior({required this.seleccionada, required this.onSeleccion});
 
@@ -104,35 +107,156 @@ class _BarraInferior extends StatelessWidget {
     (Icons.settings_outlined, 'Ajustes', 'Ajustes'),
   ];
 
+  /// Número de columnas tal que la etiqueta más ancha quepa entera.
+  int _columnas(BuildContext context, double ancho) {
+    final escalador = MediaQuery.textScalerOf(context);
+    var maximo = 0.0;
+    for (final (_, texto, _) in _destinos) {
+      final tp = TextPainter(
+        text: TextSpan(
+          text: texto,
+          style: kEstiloEtiqueta.copyWith(fontWeight: FontWeight.w700),
+        ),
+        textDirection: TextDirection.ltr,
+        textScaler: escalador,
+        maxLines: 1,
+      )..layout();
+      if (tp.width > maximo) maximo = tp.width;
+      tp.dispose();
+    }
+    // 8 dp de margen a cada lado del texto + 4 dp de separación.
+    final necesario = maximo + 2 * kEspacio + 4;
+    for (var n = _destinos.length; n > 1; n--) {
+      if (ancho / n >= necesario) return n;
+    }
+    return 1;
+  }
+
   @override
   Widget build(BuildContext context) {
-    final mq = MediaQuery.of(context);
-    // Cinco pestañas en una fila no caben con texto al 200 %. Se limita la
-    // escala de esta barra a 1,3× para que no se recorte; el resto de la app
-    // sí escala hasta 200 %. TalkBack lee la etiqueta completa.
-    final escala = math.min(mq.textScaler.scale(14) / 14, 1.3);
-    final esquema = Theme.of(context).colorScheme;
-    return MediaQuery(
-      data: mq.copyWith(textScaler: TextScaler.linear(escala)),
-      child: DecoratedBox(
-        position: DecorationPosition.foreground,
+    final p = context.paleta;
+    return Material(
+      color: p.pestanaInactiva,
+      child: Container(
         decoration: BoxDecoration(
-          border: Border(top: BorderSide(color: esquema.outline, width: 1.5)),
+          border: Border(
+            top: BorderSide(color: p.borde, width: kBorde),
+          ),
         ),
-        child: NavigationBar(
-          selectedIndex: seleccionada,
-          onDestinationSelected: onSeleccion,
-          labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
-          height: 64 + 20 * escala,
-          destinations: [
-            for (final (icono, texto, tooltip) in _destinos)
-              NavigationDestination(
-                icon: Icon(icono),
-                selectedIcon: Icon(icono, weight: 700),
-                label: texto,
-                tooltip: tooltip,
+        child: SafeArea(
+          top: false,
+          child: Padding(
+            padding: const EdgeInsets.all(4),
+            child: LayoutBuilder(
+              builder: (context, restr) {
+                final n = _columnas(context, restr.maxWidth);
+                final ancho = (restr.maxWidth / n).floorToDouble();
+                return Semantics(
+                  container: true,
+                  explicitChildNodes: true,
+                  child: Wrap(
+                    children: [
+                      for (var i = 0; i < _destinos.length; i++)
+                        SizedBox(
+                          width: ancho,
+                          child: _Pestana(
+                            icono: _destinos[i].$1,
+                            texto: _destinos[i].$2,
+                            etiqueta: _destinos[i].$3,
+                            indice: i,
+                            total: _destinos.length,
+                            activa: i == seleccionada,
+                            onTap: () => onSeleccion(i),
+                          ),
+                        ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Pestaña: activa = relleno de acento + negrita; inactiva = sin relleno.
+class _Pestana extends StatelessWidget {
+  const _Pestana({
+    required this.icono,
+    required this.texto,
+    required this.etiqueta,
+    required this.indice,
+    required this.total,
+    required this.activa,
+    required this.onTap,
+  });
+
+  final IconData icono;
+  final String texto;
+  final String etiqueta;
+  final int indice;
+  final int total;
+  final bool activa;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.paleta;
+    final color = activa ? p.sobreAcento : p.textoSecundario;
+    return Padding(
+      padding: const EdgeInsets.all(2),
+      child: Semantics(
+        container: true,
+        button: true,
+        selected: activa,
+        label: 'Pestaña $etiqueta, ${indice + 1} de $total',
+        onTap: onTap,
+        excludeSemantics: true,
+        child: Tooltip(
+          message: etiqueta,
+          excludeFromSemantics: true,
+          child: Material(
+            color: activa ? p.acento : Colors.transparent,
+            shape: RoundedRectangleBorder(
+              borderRadius: kRadioBorde,
+              side: activa
+                  ? BorderSide(color: p.acento, width: kBorde)
+                  : BorderSide.none,
+            ),
+            child: Tocable(
+              onTap: onTap,
+              anilloDentro: true,
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(minHeight: 64),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 4,
+                    vertical: kEspacio,
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(icono, color: color),
+                      const SizedBox(height: 4),
+                      Text(
+                        texto,
+                        textAlign: TextAlign.center,
+                        style: kEstiloEtiqueta.copyWith(
+                          color: color,
+                          fontWeight: activa
+                              ? FontWeight.w700
+                              : FontWeight.w400,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
-          ],
+            ),
+          ),
         ),
       ),
     );
