@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import '../../data/datos_mock.dart';
 import '../../estado.dart';
 import '../comunes.dart';
+import '../tema.dart';
 
 class PantallaDetalleParada extends StatelessWidget {
   const PantallaDetalleParada({
@@ -69,8 +70,17 @@ class PantallaDetalleParada extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(titulo, style: tt.titleMedium),
-                        const SizedBox(height: 4),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            EtiquetaLinea(l.id),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Text(titulo, style: tt.titleMedium),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: kEspacio),
                         Text(linea2, style: tt.bodyLarge),
                       ],
                     ),

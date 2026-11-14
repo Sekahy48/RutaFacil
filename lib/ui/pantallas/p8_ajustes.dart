@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../../estado.dart';
 import '../comunes.dart';
+import '../tema.dart';
 
 class PantallaAjustes extends StatelessWidget {
   const PantallaAjustes({super.key});
@@ -28,14 +29,14 @@ class PantallaAjustes extends StatelessWidget {
           Text(
             'La vibración y el mensaje del aviso siempre están activados.',
             style: tt.bodyLarge?.copyWith(
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
+              color: context.paleta.textoSecundario,
             ),
           ),
           const SizedBox(height: 12),
           Text(
             'Los ajustes no se guardan al cerrar la app (prototipo).',
             style: tt.bodyMedium?.copyWith(
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
+              color: context.paleta.textoSecundario,
             ),
           ),
         ],
@@ -60,9 +61,8 @@ class _Conmutador extends StatelessWidget {
       builder: (context, activo, _) => Caja(
         padding: EdgeInsets.zero,
         child: MergeSemantics(
-          child: InkWell(
+          child: Tocable(
             onTap: () => valor.value = !activo,
-            borderRadius: BorderRadius.circular(8),
             child: Padding(
               padding: const EdgeInsets.fromLTRB(16, 12, 8, 12),
               child: Row(
@@ -81,13 +81,11 @@ class _Conmutador extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 8),
-                  Switch(
-                    value: activo,
-                    onChanged: (v) => valor.value = v,
-                    thumbIcon: WidgetStateProperty.resolveWith(
-                      (s) => s.contains(WidgetState.selected)
-                          ? const Icon(Icons.check)
-                          : const Icon(Icons.close),
+                  // El foco lo lleva la tarjeta entera (con anillo visible).
+                  ExcludeFocus(
+                    child: Switch(
+                      value: activo,
+                      onChanged: (v) => valor.value = v,
                     ),
                   ),
                 ],
@@ -106,7 +104,7 @@ class _Antelacion extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tt = Theme.of(context).textTheme;
-    final esquema = Theme.of(context).colorScheme;
+    final p = context.paleta;
     return ValueListenableBuilder<int>(
       valueListenable: estado.antelacion,
       builder: (context, actual, _) => Caja(
@@ -121,8 +119,8 @@ class _Antelacion extends StatelessWidget {
             Text('Paradas antes de la de bajada', style: tt.bodyLarge),
             const SizedBox(height: 12),
             Wrap(
-              spacing: 16,
-              runSpacing: 12,
+              spacing: 2 * kEspacio,
+              runSpacing: 2 * kEspacio,
               children: [
                 for (final n in [1, 2, 3])
                   Semantics(
@@ -133,29 +131,29 @@ class _Antelacion extends StatelessWidget {
                     label: n == 1 ? '1 parada antes' : '$n paradas antes',
                     onTap: () => estado.antelacion.value = n,
                     excludeSemantics: true,
+                    // Elegida: relleno de acento + «✓». No elegidas: solo borde.
                     child: n == actual
                         ? FilledButton(
                             onPressed: () {},
                             style: FilledButton.styleFrom(
-                              minimumSize: const Size(88, 64),
-                              side: BorderSide(
-                                color: esquema.outline,
-                                width: 3,
-                              ),
+                              minimumSize: const Size(88, 56),
                             ),
                             child: Text(
                               '✓ $n',
                               style: tt.titleLarge?.copyWith(
-                                color: esquema.onPrimary,
+                                color: p.sobreAcento,
                               ),
                             ),
                           )
                         : OutlinedButton(
                             onPressed: () => estado.antelacion.value = n,
                             style: OutlinedButton.styleFrom(
-                              minimumSize: const Size(88, 64),
+                              minimumSize: const Size(88, 56),
                             ),
-                            child: Text('$n', style: tt.titleLarge),
+                            child: Text(
+                              '$n',
+                              style: tt.titleLarge?.copyWith(color: p.acento),
+                            ),
                           ),
                   ),
               ],

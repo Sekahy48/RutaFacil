@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../../data/datos_mock.dart';
 import '../comunes.dart';
+import '../tema.dart';
 import 'p3_detalle_linea.dart';
 
 class PantallaLineas extends StatelessWidget {
@@ -19,6 +20,7 @@ class PantallaLineas extends StatelessWidget {
           for (final l in kLineas)
             FilaNavegable(
               titulo: l.nombre,
+              inicio: EtiquetaLinea(l.id),
               subtitulo: '${l.resumen}\nCada ${l.frecuencia} min',
               etiqueta:
                   '${l.nombre}. ${l.resumen}. Cada ${l.frecuencia} '
@@ -35,7 +37,7 @@ class PantallaLineas extends StatelessWidget {
               'Datos de ejemplo de la zona de prueba',
               textAlign: TextAlign.center,
               style: tt.bodyLarge?.copyWith(
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                color: context.paleta.textoSecundario,
               ),
             ),
           ),

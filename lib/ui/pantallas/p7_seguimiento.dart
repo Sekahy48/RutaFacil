@@ -8,6 +8,7 @@ import '../../data/datos_mock.dart';
 import '../../data/planificador.dart';
 import '../../estado.dart';
 import '../comunes.dart';
+import '../tema.dart';
 
 enum _TipoPaso { espera, viaje, trasbordo, llegada }
 
@@ -190,6 +191,8 @@ class _PantallaSeguimientoState extends State<PantallaSeguimiento> {
             onPressed: () => Navigator.of(context).pop(false),
             child: const Text('No'),
           ),
+          // Separación ≥ 24 dp entre «No» y «Sí» (salir).
+          const SizedBox(width: kEspacioCritico - 2 * kEspacio),
           FilledButton(
             onPressed: () => Navigator.of(context).pop(true),
             child: const Text('Sí'),
@@ -203,16 +206,18 @@ class _PantallaSeguimientoState extends State<PantallaSeguimiento> {
   @override
   Widget build(BuildContext context) {
     final tt = Theme.of(context).textTheme;
-    final esquema = Theme.of(context).colorScheme;
+    final p = context.paleta;
     final apilar = MediaQuery.textScalerOf(context).scale(10) > 14;
 
+    final hayAnterior = _paso > 0;
+    final haySiguiente = _paso < _pasos.length - 1;
     final anterior = OutlinedButton(
-      onPressed: _paso > 0 ? _anterior : null,
-      child: const Text('Paso anterior', textAlign: TextAlign.center),
+      onPressed: hayAnterior ? _anterior : null,
+      child: textoBoton('Paso anterior', activo: hayAnterior),
     );
     final siguiente = OutlinedButton(
-      onPressed: _paso < _pasos.length - 1 ? _siguiente : null,
-      child: const Text('Paso siguiente', textAlign: TextAlign.center),
+      onPressed: haySiguiente ? _siguiente : null,
+      child: textoBoton('Paso siguiente', activo: haySiguiente),
     );
 
     return PopScope(
@@ -234,20 +239,17 @@ class _PantallaSeguimientoState extends State<PantallaSeguimiento> {
           padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
           children: [
             if (_avisoVisible) ...[
+              // Aviso: ⚠ + «AVISO» + borde de 3 dp + vibración (no solo color).
               Semantics(
                 liveRegion: true,
                 child: Caja(
-                  grosor: 4,
+                  grosor: kBordeEstado,
+                  colorBorde: p.avisoBorde,
+                  colorFondo: p.avisoFondo,
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      ExcludeSemantics(
-                        child: Icon(
-                          Icons.notifications_active,
-                          size: 32,
-                          color: esquema.onSurface,
-                        ),
-                      ),
+                      IconoAtencion(color: p.texto, tamano: 32),
                       const SizedBox(width: 12),
                       Expanded(
                         child: Column(
@@ -278,21 +280,21 @@ class _PantallaSeguimientoState extends State<PantallaSeguimiento> {
               Semantics(
                 liveRegion: true,
                 child: Caja(
-                  grosor: 4,
+                  grosor: kBordeEstado,
+                  colorBorde: p.exito,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      Text(
-                        '✓ Has llegado a tu parada',
-                        style: tt.headlineSmall,
-                      ),
+                      const TextoExito('Has llegado a tu parada'),
                       const SizedBox(height: 4),
                       Text(_t.destino.nombre, style: tt.titleLarge),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: kEspacioCritico),
                       FilledButton(
                         onPressed: () => Navigator.of(context).pop(true),
                         style: FilledButton.styleFrom(
-                          minimumSize: const Size.fromHeight(64),
+                          minimumSize: const Size.fromHeight(
+                            kAltoBotonPrincipal,
+                          ),
                         ),
                         child: const Text('Terminar trayecto'),
                       ),
@@ -300,7 +302,7 @@ class _PantallaSeguimientoState extends State<PantallaSeguimiento> {
                   ),
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: kEspacioCritico),
             ] else ...[
               MergeSemantics(
                 child: Caja(
@@ -308,7 +310,12 @@ class _PantallaSeguimientoState extends State<PantallaSeguimiento> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text('Te bajas en:', style: tt.bodyLarge),
-                      Text(_bajada.nombre, style: tt.headlineSmall),
+                      Text(
+                        _bajada.nombre,
+                        style: tt.titleLarge?.copyWith(
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
                       const SizedBox(height: 8),
                       Text(
                         'Faltan ${_paradasTxt(_faltan)}',
@@ -365,12 +372,9 @@ class _PantallaSeguimientoState extends State<PantallaSeguimiento> {
             FilledButton(
               onPressed: _llegado ? null : _hePasado,
               style: FilledButton.styleFrom(
-                minimumSize: const Size.fromHeight(64),
+                minimumSize: const Size.fromHeight(kAltoBotonPrincipal),
               ),
-              child: const Text(
-                'He pasado una parada',
-                textAlign: TextAlign.center,
-              ),
+              child: textoBoton('He pasado una parada', activo: !_llegado),
             ),
             const SizedBox(height: 20),
             Text(
@@ -379,12 +383,12 @@ class _PantallaSeguimientoState extends State<PantallaSeguimiento> {
               'Sonido del aviso: '
               '${estado.sonidoAviso.value ? 'activado' : 'desactivado'}. '
               'La vibración siempre está activada.',
-              style: tt.bodyMedium?.copyWith(color: esquema.onSurfaceVariant),
+              style: tt.bodyMedium?.copyWith(color: p.textoSecundario),
             ),
             const SizedBox(height: 8),
             Text(
               'Avance simulado con botones (sin GPS ni tiempo real).',
-              style: tt.bodyMedium?.copyWith(color: esquema.onSurfaceVariant),
+              style: tt.bodyMedium?.copyWith(color: p.textoSecundario),
             ),
           ],
         ),

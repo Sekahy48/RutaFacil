@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../../data/datos_mock.dart';
 import '../comunes.dart';
+import '../tema.dart';
 import 'p5_detalle_parada.dart';
 
 class PantallaDetalleLinea extends StatelessWidget {
@@ -24,12 +25,22 @@ class PantallaDetalleLinea extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 16, 20, 4),
-            child: Text(
-              '${linea.resumen}\nPrimera salida ${hhmm(linea.primeraSalida)}'
-              ' · cada ${linea.frecuencia} min',
-              style: tt.bodyLarge?.copyWith(
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-              ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                EtiquetaLinea(linea.id),
+                const SizedBox(width: 2 * kEspacio),
+                Expanded(
+                  child: Text(
+                    '${linea.resumen}\nPrimera salida '
+                    '${hhmm(linea.primeraSalida)}'
+                    ' · cada ${linea.frecuencia} min',
+                    style: tt.bodyLarge?.copyWith(
+                      color: context.paleta.textoSecundario,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
           const AvisoHorariosTeoricos(),
