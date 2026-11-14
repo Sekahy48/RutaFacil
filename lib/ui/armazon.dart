@@ -124,9 +124,10 @@ class _BarraInferior extends StatelessWidget {
       if (tp.width > maximo) maximo = tp.width;
       tp.dispose();
     }
-    // 8 dp de margen a cada lado del texto + 4 dp de separación.
-    final necesario = maximo + 2 * kEspacio + 4;
-    for (var n = _destinos.length; n > 1; n--) {
+    // Relleno interior de la pestaña (4 + 2 dp por lado) + 2 dp de holgura.
+    final necesario = maximo + 14;
+    // 5 en una fila; si no caben, 3 + 2; después 2 + 2 + 1; por último 1.
+    for (final n in [_destinos.length, 3, 2]) {
       if (ancho / n >= necesario) return n;
     }
     return 1;
@@ -155,6 +156,7 @@ class _BarraInferior extends StatelessWidget {
                   container: true,
                   explicitChildNodes: true,
                   child: Wrap(
+                    alignment: WrapAlignment.center,
                     children: [
                       for (var i = 0; i < _destinos.length; i++)
                         SizedBox(
