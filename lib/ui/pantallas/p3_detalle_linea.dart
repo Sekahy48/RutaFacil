@@ -8,9 +8,16 @@ import '../tema.dart';
 import 'p5_detalle_parada.dart';
 
 class PantallaDetalleLinea extends StatelessWidget {
-  const PantallaDetalleLinea({super.key, required this.linea});
+  const PantallaDetalleLinea({
+    super.key,
+    required this.linea,
+    this.volverA = 'Líneas',
+  });
 
   final Linea linea;
+
+  /// Texto del botón de volver (pantalla de la que venimos).
+  final String volverA;
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +27,7 @@ class PantallaDetalleLinea extends StatelessWidget {
 
     return Pantalla(
       titulo: linea.nombre,
-      volverA: 'Líneas',
+      volverA: volverA,
       cuerpo: ListView(
         children: [
           Padding(

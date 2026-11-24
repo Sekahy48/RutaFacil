@@ -6,6 +6,7 @@ import '../../data/datos_mock.dart';
 import '../../estado.dart';
 import '../comunes.dart';
 import '../tema.dart';
+import 'p3_detalle_linea.dart';
 
 class PantallaDetalleParada extends StatelessWidget {
   const PantallaDetalleParada({
@@ -65,24 +66,54 @@ class PantallaDetalleParada extends StatelessWidget {
                           ? 'Sin más llegadas hoy'
                           : 'Llegadas: ${horas.join(' · ')}')
                     : textoProximos(horas);
-                return MergeSemantics(
-                  child: Caja(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
+                // Lo que lee TalkBack: una sola frase, sin «·».
+                final dicho = esFinal
+                    ? (horas.isEmpty
+                          ? 'Sin más llegadas hoy'
+                          : 'Llegadas: ${horas.join(', ')}')
+                    : textoProximosHablado(horas);
+                final destino = esFinal ? 'final de línea' : 'a ${l.destino}';
+                void abrir() => Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) =>
+                        PantallaDetalleLinea(linea: l, volverA: parada.nombre),
+                  ),
+                );
+                return Semantics(
+                  container: true,
+                  button: true,
+                  label:
+                      '${l.nombre}, $destino. $dicho. '
+                      'Abrir detalle de la línea.',
+                  onTap: abrir,
+                  excludeSemantics: true,
+                  // El fondo lo pone el Material (así se ve la onda al tocar);
+                  // la Caja conserva borde, radio y relleno.
+                  child: Material(
+                    color: context.paleta.superficie,
+                    borderRadius: kRadioBorde,
+                    child: Tocable(
+                      onTap: abrir,
+                      child: Caja(
+                        colorFondo: Colors.transparent,
+                        child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            EtiquetaLinea(l.id),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Text(titulo, style: tt.titleMedium),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                EtiquetaLinea(l.id),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Text(titulo, style: tt.titleMedium),
+                                ),
+                              ],
                             ),
+                            const SizedBox(height: kEspacio),
+                            Text(linea2, style: tt.bodyLarge),
                           ],
                         ),
-                        const SizedBox(height: kEspacio),
-                        Text(linea2, style: tt.bodyLarge),
-                      ],
+                      ),
                     ),
                   ),
                 );
