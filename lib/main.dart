@@ -3,12 +3,14 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-
+import 'data/paradas_lineas.dart';
 import 'estado.dart';
 import 'ui/armazon.dart';
 import 'ui/tema.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await cargarDatos();
   runApp(const RutaFacilApp());
 }
 

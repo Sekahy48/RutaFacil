@@ -1,0 +1,840 @@
+{
+    "lineas": [
+  {
+   "ref": "1",
+   "operador": "Autobuses Urbanos de León S.A.",
+   "metropolitana": false,
+   "variantes": [
+    {
+     "nombre": "1: Armunia → Hospitales",
+     "from": "Armunia",
+     "to": "Hospitales",
+     "paradas": [
+      "11240828108",
+      "6700260214",
+      "4906096518",
+      "4906096845",
+      "4906096844",
+      "4906096843",
+      "4906096842",
+      "4906096841",
+      "4906096838",
+      "4906096837",
+      "4906096835",
+      "7470472963",
+      "5860832037"
+     ],
+     "incompleta": false,
+     "horarios": null
+    },
+    {
+     "nombre": "1: Hospitales → Armunia",
+     "from": "Hospitales",
+     "to": "Armunia",
+     "paradas": [
+      "5860832037",
+      "7470472962",
+      "7510495491",
+      "6742956628",
+      "4906096836",
+      "4906096839",
+      "11240828091",
+      "6742956627",
+      "6742956625",
+      "6742956623",
+      "6742956621",
+      "4906096519",
+      "6700260215"
+     ],
+     "incompleta": false,
+     "horarios": null
+    },
+    {
+     "nombre": "1: Hospitales → Armunia por Trobajo del Cerecedo",
+     "from": "Hospitales",
+     "to": "Armunia",
+     "paradas": [
+      "5860832037",
+      "7470472962",
+      "7510495491",
+      "6742956628",
+      "4906096836",
+      "4906096839",
+      "11240828091",
+      "6742956627",
+      "6742956625",
+      "6742956623",
+      "6742956621",
+      "4906096519",
+      "6700260215"
+     ],
+     "incompleta": false,
+     "horarios": null
+    }
+   ]
+  },
+  {
+   "ref": "10",
+   "operador": "Autobuses Urbanos de León S.A.",
+   "metropolitana": false,
+   "variantes": [
+    {
+     "nombre": "10: Hospital Monte San Isidro → El Crucero",
+     "from": "Hospital Monte San Isidro",
+     "to": "El Crucero",
+     "paradas": [
+      "7503164793",
+      "7503164794",
+      "7503164796",
+      "7503164797",
+      "4906096836",
+      "4906096839",
+      "11240828091",
+      "7503164799",
+      "7503164802",
+      "7503164803"
+     ],
+     "incompleta": false,
+     "horarios": null
+    },
+    {
+     "nombre": "10: El Crucero → Hospital Monte San Isidro",
+     "from": "El Crucero",
+     "to": "Hospital Monte San Isidro",
+     "paradas": [
+      "7503164803",
+      "7503573934",
+      "7503573935",
+      "7503573937",
+      "4906096518",
+      "4906096844",
+      "4906096843",
+      "4906096842",
+      "4906096841",
+      "4906096838",
+      "4906096837",
+      "7503668793",
+      "7503668794",
+      "7503668795"
+     ],
+     "incompleta": false,
+     "horarios": null
+    }
+   ]
+  },
+  {
+   "ref": "11",
+   "operador": "Autobuses Urbanos de León S.A.",
+   "metropolitana": false,
+   "variantes": [
+    {
+     "nombre": "11: Polígono X → Eras de Renueva",
+     "from": "Polígono X",
+     "to": "Eras de Renueva",
+     "paradas": [
+      "7476558082",
+      "7476558084",
+      "7476574685",
+      "7476574686",
+      "7476574687",
+      "7476574688",
+      "4906096516",
+      "7468879473",
+      "4906096844",
+      "4906096843",
+      "7476574690",
+      "7476574691",
+      "7476574692",
+      "7473265461",
+      "7476574693",
+      "7476574694",
+      "7476574695",
+      "7447014976",
+      "7476574696"
+     ],
+     "incompleta": false,
+     "horarios": null
+    },
+    {
+     "nombre": "11: Eras de Renueva → Polígono X",
+     "from": "Eras de Renueva",
+     "to": "Polígono X",
+     "paradas": [
+      "7476558074",
+      "7476558076",
+      "7476558077",
+      "7476558078",
+      "7447015177",
+      "7476558079",
+      "7473265462",
+      "7473265463",
+      "7473265465",
+      "4906096821",
+      "4906096520",
+      "4906096518",
+      "4906096517",
+      "582986701",
+      "7476558080",
+      "5619874721",
+      "7476558081",
+      "7476558082"
+     ],
+     "incompleta": false,
+     "horarios": null
+    },
+    {
+     "nombre": "11: Eras de Renueva (San Cayetano) → Polígono X",
+     "from": "San Cayetano",
+     "to": "Polígono X",
+     "paradas": [
+      "7476558074",
+      "7476558076",
+      "7476558077",
+      "7476558078",
+      "7447015177",
+      "7476558079",
+      "7473265462",
+      "7473265463",
+      "7473265465",
+      "4906096821",
+      "4906096520",
+      "4906096518",
+      "4906096517",
+      "582986701",
+      "7476558080",
+      "5619874721",
+      "7476558081",
+      "7476558082"
+     ],
+     "incompleta": false,
+     "horarios": null
+    }
+   ]
+  },
+  {
+   "ref": "12",
+   "operador": "Autobuses Urbanos de León S.A.",
+   "metropolitana": false,
+   "variantes": [
+    {
+     "nombre": "12: Pinilla → Eras de Renueva → Universidad",
+     "from": "Pinilla",
+     "to": "Universidad",
+     "paradas": [
+      "5885015628",
+      "7473265457",
+      "6649983333",
+      "7473265459",
+      "6655138291",
+      "7473265462",
+      "7473265463",
+      "7473265465",
+      "4906096821",
+      "7473265471",
+      "4906096843",
+      "4906096842",
+      "6742956627",
+      "7473265472",
+      "7473265473",
+      "7473265474",
+      "7473265475",
+      "7473265476",
+      "7449552937"
+     ],
+     "incompleta": false,
+     "horarios": null
+    },
+    {
+     "nombre": "12: Universidad → Eras de Renueva → Pinilla",
+     "from": "Universidad",
+     "to": "Pinilla",
+     "paradas": [
+      "7449552937",
+      "7473265477",
+      "7473265484",
+      "7473265483",
+      "7473265482",
+      "7473265480",
+      "7473265481",
+      "6742956625",
+      "582986820",
+      "7473265479",
+      "7473265470",
+      "7473265467",
+      "7473265464",
+      "7473265461",
+      "6655138290",
+      "7473265460",
+      "7473265458",
+      "7473265456",
+      "5885015628"
+     ],
+     "incompleta": false,
+     "horarios": null
+    }
+   ]
+  },
+  {
+   "ref": "13",
+   "operador": "Autobuses Urbanos de León S.A.",
+   "metropolitana": false,
+   "variantes": [
+    {
+     "nombre": "13: La Chantría → Área 17",
+     "from": "La Chantría",
+     "to": "Área 17",
+     "paradas": [
+      "11255093286",
+      "4906096516",
+      "6742956623",
+      "7473265479",
+      "7473265470",
+      "7473265467",
+      "7473265464",
+      "7473265461",
+      "6655138290",
+      "11279428656",
+      "6645940959",
+      "7470711738"
+     ],
+     "incompleta": false,
+     "horarios": null
+    },
+    {
+     "nombre": "13: Área 17 → La Chantría",
+     "from": "Área 17",
+     "to": "La Chantría",
+     "paradas": [
+      "7470711738",
+      "6655138291",
+      "7473265462",
+      "7473265463",
+      "7473265465",
+      "4906096821",
+      "7473265471",
+      "6742956625",
+      "11241728093",
+      "582986701",
+      "7476558080",
+      "5619874721",
+      "5619870922"
+     ],
+     "incompleta": false,
+     "horarios": null
+    }
+   ]
+  },
+  {
+   "ref": "2",
+   "operador": "Autobuses Urbanos de León S.A.",
+   "metropolitana": false,
+   "variantes": [
+    {
+     "nombre": "2: Santo Domingo → Doctor Fleming",
+     "from": "Santo Domingo",
+     "to": "Doctor Fleming",
+     "paradas": [
+      "582986820",
+      "7544619054",
+      "11247032743",
+      "11251880611",
+      "11251880628",
+      "11251975295",
+      "11251975297",
+      "11251975300",
+      "11251975304",
+      "11251975306",
+      "11251975308",
+      "11251975310",
+      "11251975314",
+      "11251975316"
+     ],
+     "incompleta": false,
+     "horarios": null
+    },
+    {
+     "nombre": "2: Doctor Fleming → Santo Domingo",
+     "from": "Doctor Fleming",
+     "to": "Santo Domingo",
+     "paradas": [
+      "7503573935",
+      "11252840348",
+      "11252840350",
+      "11252840354",
+      "11251975300",
+      "11251975304",
+      "11253670140",
+      "11253670143",
+      "11240828108",
+      "7476574688",
+      "4906096516",
+      "582986820",
+      "11251975316"
+     ],
+     "incompleta": false,
+     "horarios": null
+    }
+   ]
+  },
+  {
+   "ref": "3",
+   "operador": "Autobuses Urbanos de León S.A.",
+   "metropolitana": false,
+   "variantes": [
+    {
+     "nombre": "3: Santo Domingo → Universidad",
+     "from": "Santo Domingo",
+     "to": "Universidad",
+     "paradas": [
+      "7468879473",
+      "7544619054",
+      "7544619055",
+      "7476558081",
+      "7476558082",
+      "11253842424",
+      "11253842426",
+      "11253842427",
+      "11253842429",
+      "11253842431",
+      "6775537686",
+      "6775537486",
+      "6775537487",
+      "7517435077",
+      "7449552936"
+     ],
+     "incompleta": false,
+     "horarios": null
+    },
+    {
+     "nombre": "3: Universidad → Santo Domingo",
+     "from": "Santo Domingo",
+     "to": "Universidad",
+     "paradas": [
+      "7449552936",
+      "11255093265",
+      "11255093269",
+      "11255093271",
+      "11255093273",
+      "11255093274",
+      "11255093277",
+      "11255093278",
+      "5619870922",
+      "11255093286",
+      "4906096516",
+      "7468879473"
+     ],
+     "incompleta": false,
+     "horarios": null
+    }
+   ]
+  },
+  {
+   "ref": "4",
+   "operador": "Autobuses Urbanos de León S.A.",
+   "metropolitana": false,
+   "variantes": [
+    {
+     "nombre": "4: Universidad → Crucero → Pinilla",
+     "from": "Universidad",
+     "to": "Pinilla",
+     "paradas": [
+      "7449552937",
+      "11258698954",
+      "11258698956",
+      "7473265484",
+      "7473265483",
+      "7473265482",
+      "7473265480",
+      "7473265481",
+      "6742956625",
+      "582986820",
+      "6742956621",
+      "4906096519",
+      "11258698967",
+      "11258698968",
+      "11258698970",
+      "11258698973"
+     ],
+     "incompleta": false,
+     "horarios": null
+    },
+    {
+     "nombre": "4: Pinilla → Crucero → Universidad",
+     "from": "Pinilla",
+     "to": "Universidad",
+     "paradas": [
+      "7510495493",
+      "7503164803",
+      "7503573934",
+      "7503573935",
+      "7503573937",
+      "11258705158",
+      "11258705161",
+      "4906096843",
+      "4906096842",
+      "6742956627",
+      "7473265472",
+      "7473265473",
+      "11242359281",
+      "11242359283",
+      "11245317318",
+      "11258705163",
+      "7449552937"
+     ],
+     "incompleta": false,
+     "horarios": null
+    }
+   ]
+  },
+  {
+   "ref": "5",
+   "operador": "Autobuses Urbanos de León S.A.",
+   "metropolitana": false,
+   "variantes": [
+    {
+     "nombre": "5: Santo Domingo → Oteruelo",
+     "from": "Santo Domingo",
+     "to": "Oteruelo",
+     "paradas": [
+      "6742956623",
+      "6742956621",
+      "4906096519",
+      "4906096518",
+      "4906096517",
+      "7544619055",
+      "11251880628",
+      "11251975295",
+      "11263341167"
+     ],
+     "incompleta": false,
+     "horarios": null
+    }
+   ]
+  },
+  {
+   "ref": "6",
+   "operador": "Autobuses Urbanos de León S.A.",
+   "metropolitana": false,
+   "variantes": [
+    {
+     "nombre": "6: Hospitales → Puente Castro",
+     "from": "Hospitales",
+     "to": "Puente Castro",
+     "paradas": [
+      "5860832037",
+      "11240675675",
+      "6742956628",
+      "4906096836",
+      "7473265482",
+      "7473265480",
+      "7473265481",
+      "6742956625",
+      "11241728093",
+      "582986701",
+      "7476558080",
+      "11241120459"
+     ],
+     "incompleta": false,
+     "horarios": null
+    },
+    {
+     "nombre": "6: Hospitales → Puente Castro (Cementerio)",
+     "from": "Hospitales",
+     "to": "Puente Castro",
+     "paradas": [
+      "5860832037",
+      "11240675675",
+      "6742956628",
+      "4906096836",
+      "7473265482",
+      "7473265480",
+      "7473265481",
+      "6742956625",
+      "11241728093",
+      "582986701",
+      "7476558080",
+      "11241120459"
+     ],
+     "incompleta": false,
+     "horarios": null
+    },
+    {
+     "nombre": "6: Puente Castro → Hospitales",
+     "from": "Puente Castro",
+     "to": "Hospitales",
+     "paradas": [
+      "7511336619",
+      "11242359276",
+      "4906096516",
+      "4906096845",
+      "4906096844",
+      "4906096843",
+      "4906096842",
+      "6742956627",
+      "7473265472",
+      "7473265473",
+      "11242359281",
+      "11242359283",
+      "11245317318",
+      "4906096835",
+      "7470472963",
+      "5860832037"
+     ],
+     "incompleta": false,
+     "horarios": null
+    },
+    {
+     "nombre": "6: Puente Castro (Cementerio) → Hospitales",
+     "from": "Puente Castro",
+     "to": "Hospitales",
+     "paradas": [
+      "7511336619",
+      "11242359276",
+      "4906096516",
+      "4906096845",
+      "4906096844",
+      "4906096843",
+      "4906096842",
+      "6742956627",
+      "7473265472",
+      "7473265473",
+      "11242359281",
+      "11242359283",
+      "11245317318",
+      "4906096835",
+      "7470472963",
+      "5860832037"
+     ],
+     "incompleta": false,
+     "horarios": null
+    }
+   ]
+  },
+  {
+   "ref": "7C",
+   "operador": "Autobuses Urbanos de León S.A.",
+   "metropolitana": false,
+   "variantes": [
+    {
+     "nombre": "7C: Estación Autobuses → Hospitales → El Ejido",
+     "from": "Estación Autobuses",
+     "to": "El Ejido",
+     "paradas": [
+      "5860832037",
+      "7470472962",
+      "7510495491",
+      "6742956628",
+      "11258698956",
+      "11263471439",
+      "11263471440",
+      "11263471442",
+      "11255093273",
+      "11255093274",
+      "11263471446",
+      "7476574685",
+      "7476574686",
+      "5619870922",
+      "11258698967",
+      "11258698968",
+      "11258698970",
+      "5885015628",
+      "7473265457",
+      "6649983333",
+      "7473265459",
+      "6655138291",
+      "7473265462",
+      "7473265463",
+      "7473265465",
+      "4906096842",
+      "11263471461",
+      "11263471464",
+      "11263471465",
+      "11263471468",
+      "7470472963"
+     ],
+     "incompleta": false,
+     "horarios": null
+    }
+   ]
+  },
+  {
+   "ref": "8",
+   "operador": "Autobuses Urbanos de León S.A.",
+   "metropolitana": false,
+   "variantes": [
+    {
+     "nombre": "8: Santo Domingo → Trobajo del Cerecedo",
+     "from": "Santo Domingo",
+     "to": "Trobajo del Cerecedo",
+     "paradas": [
+      "7468879473",
+      "7544619054",
+      "7544619055"
+     ],
+     "incompleta": true,
+     "horarios": null
+    },
+    {
+     "nombre": "8: Trobajo del Cerecedo → Santo Domingo",
+     "from": "Trobajo del Cerecedo",
+     "to": "Santo Domingo",
+     "paradas": [
+      "11240828108",
+      "11255093286",
+      "4906096516",
+      "7468879473"
+     ],
+     "incompleta": true,
+     "horarios": null
+    }
+   ]
+  },
+  {
+   "ref": "9C",
+   "operador": "Autobuses Urbanos de León S.A.",
+   "metropolitana": false,
+   "variantes": [
+    {
+     "nombre": "9C: Hospitales → Estación Autobuses → El Ejido",
+     "from": "Hospitales",
+     "to": "El Ejido",
+     "paradas": [
+      "5860832037",
+      "7470472962",
+      "7510495491",
+      "6742956628",
+      "4906096836",
+      "4906096839",
+      "11240828091",
+      "7503164799",
+      "7473265467",
+      "7473265464",
+      "7473265461",
+      "6655138290",
+      "7473265460",
+      "7473265458",
+      "7473265456",
+      "7510495493",
+      "7503164803",
+      "7503573934",
+      "7503573935",
+      "7503573937",
+      "7511336619",
+      "7476558081",
+      "7511336620",
+      "7511336621",
+      "7511336622",
+      "7511336623",
+      "11246997217",
+      "6775537686",
+      "6775537486",
+      "6775537487",
+      "7517435077",
+      "7517435078",
+      "4906096835",
+      "7470472963"
+     ],
+     "incompleta": false,
+     "horarios": null
+    }
+   ]
+  },
+  {
+   "ref": "M6A",
+   "operador": "Alsa City",
+   "metropolitana": true,
+   "variantes": [
+    {
+     "nombre": "M6A: Santo Domingo → Navatejera",
+     "from": "Santo Domingo",
+     "to": "Navatejera",
+     "paradas": [
+      "4906096845",
+      "4906096844",
+      "4906096842",
+      "4906096841",
+      "4906096838",
+      "4906096837",
+      "4906096835",
+      "11282204798",
+      "11282204800"
+     ],
+     "incompleta": false,
+     "horarios": null
+    },
+    {
+     "nombre": "M6A: Navatejera → Santo Domingo",
+     "from": "Navatejera",
+     "to": "Santo Domingo",
+     "paradas": [
+      "11282294494",
+      "11240675675",
+      "6742956628",
+      "4906096836",
+      "4906096839",
+      "11240828091",
+      "7503164799",
+      "4906096821",
+      "4906096520",
+      "4906096519",
+      "4906096518",
+      "4906096517",
+      "582986701",
+      "4906096516",
+      "4906096845"
+     ],
+     "incompleta": false,
+     "horarios": null
+    }
+   ]
+  },
+  {
+   "ref": "M6B",
+   "operador": "Alsa City",
+   "metropolitana": true,
+   "variantes": [
+    {
+     "nombre": "M6B: Navatejera (Altollano) → Santo Domingo",
+     "from": "Navatejera",
+     "to": "Santo Domingo",
+     "paradas": [
+      "7470472962",
+      "6742956628",
+      "4906096836",
+      "4906096839",
+      "11240828091",
+      "7503164799",
+      "4906096821",
+      "4906096520",
+      "4906096519",
+      "4906096518",
+      "4906096517",
+      "582986701",
+      "4906096516",
+      "4906096845"
+     ],
+     "incompleta": false,
+     "horarios": null
+    },
+    {
+     "nombre": "M6B: Santo Domingo → Navatejera (Altollano)",
+     "from": "Santo Domingo",
+     "to": "Navatejera",
+     "paradas": [
+      "4906096845",
+      "4906096844",
+      "4906096843",
+      "4906096842",
+      "4906096841",
+      "4906096838",
+      "4906096837",
+      "4906096835",
+      "4906096834"
+     ],
+     "incompleta": false,
+     "horarios": null
+    }
+   ]
+  }
+ ]
+}

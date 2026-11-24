@@ -13,7 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 
-import '../../data/datos_mock.dart';
+import '../../data/paradas_lineas.dart';
 import '../../estado.dart';
 import '../comunes.dart';
 import '../tema.dart';

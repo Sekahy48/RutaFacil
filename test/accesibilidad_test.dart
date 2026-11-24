@@ -18,7 +18,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:rutafacil/data/datos_mock.dart';
+import 'package:rutafacil/data/paradas_lineas.dart';
 import 'package:rutafacil/data/planificador.dart';
 import 'package:rutafacil/estado.dart';
 import 'package:rutafacil/ui/armazon.dart';

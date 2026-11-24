@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 
-import '../../data/datos_mock.dart';
+import '../../data/paradas_lineas.dart';
 import '../comunes.dart';
 import '../tema.dart';
 import 'p5_detalle_parada.dart';

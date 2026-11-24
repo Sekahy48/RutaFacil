@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rutafacil/alertas.dart';
-import 'package:rutafacil/data/datos_mock.dart';
+import 'package:rutafacil/data/paradas_lineas.dart';
 import 'package:rutafacil/data/planificador.dart';
 import 'package:rutafacil/ui/pantallas/p7_seguimiento.dart';
 import 'package:rutafacil/ui/tema.dart';

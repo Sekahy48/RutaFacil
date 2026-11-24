@@ -1,7 +1,7 @@
 // Cálculo de trayectos con los datos de ejemplo:
 // directos o con 1 trasbordo, hasta 3 opciones, ordenadas por duración.
 
-import 'datos_mock.dart';
+import 'paradas_lineas.dart';
 
 /// Un tramo en una sola línea: subir en [desde] y bajar en [hasta]
 /// (índices dentro de `linea.paradas`).
