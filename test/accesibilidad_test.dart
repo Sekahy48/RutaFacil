@@ -119,6 +119,14 @@ final _casos = <_Caso>[
     'P5 detalle parada',
     () => PantallaDetalleParada(parada: kParadas.first, volverA: 'Paradas'),
   ),
+  // Hospital: todas sus tarjetas de línea son «final de línea».
+  _Caso(
+    'P5 final de línea',
+    () => PantallaDetalleParada(
+      parada: paradaPorId('hospital'),
+      volverA: 'Paradas',
+    ),
+  ),
   _Caso(
     'P6 mapa',
     () => const PantallaMapa(),
