@@ -17,6 +17,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rutafacil/data/datos_mock.dart';
 import 'package:rutafacil/data/planificador.dart';
@@ -108,6 +109,21 @@ Future<void> _resultadosP1(WidgetTester tester) async {
   expect(find.textContaining('encontrado'), findsOneWidget);
 }
 
+/// Paradas añadidas en la ampliación de los datos de ejemplo.
+const _paradasNuevas = ['eras', 'ejido', 'ordono', 'lastra'];
+
+/// Par que solo tiene trayecto con trasbordo (L6 y L9 en Estación).
+Trayecto _trayectoConTrasbordo() => buscarTrayectos('quevedo', 'lastra').first;
+
+Future<void> _resultadosTrasbordoP1(WidgetTester tester) async {
+  final campos = find.byType(EditableText);
+  await tester.enterText(campos.at(0), paradaPorId('quevedo').nombre);
+  await tester.enterText(campos.at(1), paradaPorId('lastra').nombre);
+  await _tocar(tester, 'Buscar trayecto');
+  expect(find.textContaining('encontrado'), findsOneWidget);
+  expect(find.textContaining('1 trasbordo en Estación'), findsWidgets);
+}
+
 final _casos = <_Caso>[
   _Caso('P1 buscar', () => const PantallaBuscar()),
   _Caso('P1 error', () => const PantallaBuscar(), preparar: _provocarErrorP1),
@@ -145,6 +161,23 @@ final _casos = <_Caso>[
   ),
   _Caso('P8 ajustes', () => const PantallaAjustes()),
   _Caso('Barra inferior (armazón)', () => const Armazon()),
+  // Con los datos ampliados: trayecto con trasbordo, líneas y paradas nuevas.
+  _Caso(
+    'P1 resultados con trasbordo',
+    () => const PantallaBuscar(),
+    preparar: _resultadosTrasbordoP1,
+  ),
+  for (final l in kLineas.skip(4))
+    _Caso('P3 detalle línea · ${l.id}', () => PantallaDetalleLinea(linea: l)),
+  for (final id in _paradasNuevas)
+    _Caso(
+      'P5 detalle parada · $id',
+      () => PantallaDetalleParada(parada: paradaPorId(id), volverA: 'Paradas'),
+    ),
+  _Caso(
+    'P7 seguimiento con trasbordo',
+    () => PantallaSeguimiento(trayecto: _trayectoConTrasbordo()),
+  ),
 ];
 
 Future<void> _montar(
@@ -281,6 +314,91 @@ void main() {
               lessThanOrEqualTo(caja.width - 2 * grosor),
             );
           }
+        });
+      }
+
+      // Límites de la vista inicial: el pin entero dentro del mapa (ni
+      // cortado por el borde ni fuera de cámara).
+      Rect pin(WidgetTester tester, Parada parada) => tester.getRect(
+        find
+            .ancestor(
+              of: find.text(parada.nombre),
+              matching: find.byType(Material),
+            )
+            .first,
+      );
+      bool dentro(Rect mapa, Rect r) =>
+          r.left >= mapa.left &&
+          r.top >= mapa.top &&
+          r.right <= mapa.right &&
+          r.bottom <= mapa.bottom;
+
+      testWidgets('todos los pines caben enteros en el mapa y no se solapan · '
+          '$tema · texto 100 %', (tester) async {
+        await _montar(tester, mapa, altoContraste: alto);
+        final rectMapa = tester.getRect(find.byType(FlutterMap));
+        final rects = {for (final p in kParadas) p.id: pin(tester, p)};
+        for (final MapEntry(key: id, value: r) in rects.entries) {
+          expect(dentro(rectMapa, r), isTrue, reason: '$id: $r en $rectMapa');
+        }
+        final ids = rects.keys.toList();
+        for (var i = 0; i < ids.length; i++) {
+          for (var j = i + 1; j < ids.length; j++) {
+            expect(
+              rects[ids[i]]!.overlaps(rects[ids[j]]!),
+              isFalse,
+              reason: '${ids[i]} y ${ids[j]} se solapan',
+            );
+          }
+        }
+      });
+
+      testWidgets('los pines añadidos caben enteros en el mapa · $tema · '
+          'texto 200 %', (tester) async {
+        await _montar(tester, mapa, altoContraste: alto, escalaTexto: 2.0);
+        final rectMapa = tester.getRect(find.byType(FlutterMap));
+        for (final id in _paradasNuevas) {
+          final r = pin(tester, paradaPorId(id));
+          expect(dentro(rectMapa, r), isTrue, reason: '$id: $r en $rectMapa');
+        }
+      });
+    }
+  });
+
+  // P4 con todas las paradas: el contador dice cuántas hay y, recorriendo la
+  // lista entera, cada fila pasa contraste y tamaño táctil.
+  group('P4 · lista completa de paradas', () {
+    final p4 = _casos.firstWhere((c) => c.nombre == 'P4 paradas');
+    for (final alto in [false, true]) {
+      for (final escala in [1.0, 2.0]) {
+        final tema = alto ? 'alto contraste' : 'tema normal';
+        testWidgets('contador y filas · $tema · texto '
+            '${(escala * 100).round()} %', (tester) async {
+          final semantica = tester.ensureSemantics();
+          await _montar(tester, p4, altoContraste: alto, escalaTexto: escala);
+          expect(find.text('${kParadas.length} paradas'), findsOneWidget);
+          await expectLater(tester, meetsGuideline(textContrastGuideline));
+          for (final p in paradasOrdenadas()) {
+            await tester.scrollUntilVisible(
+              find.text(p.nombre),
+              200,
+              scrollable: _lista,
+            );
+            await tester.pumpAndSettle();
+            final lineas = lineasDeParada(p.id).map((l) => l.id).join(', ');
+            expect(find.text('Líneas: $lineas'), findsOneWidget);
+            await expectLater(tester, meetsGuideline(textContrastGuideline));
+            await expectLater(
+              tester,
+              meetsGuideline(androidTapTargetGuideline),
+            );
+            await expectLater(
+              tester,
+              meetsGuideline(labeledTapTargetGuideline),
+            );
+          }
+          expect(tester.takeException(), isNull);
+          semantica.dispose();
         });
       }
     }
