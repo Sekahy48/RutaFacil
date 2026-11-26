@@ -95,10 +95,13 @@ List<Trayecto> buscarTrayectos(
 
     for (final b in kLineas) {
       if (b.id == a.id) continue;
-      // Si B ya pasa por el origen, mejor subir a B directamente.
-      if (b.paradas.contains(origenId)) continue;
       final n = b.paradas.indexOf(destinoId);
       if (n < 0) continue;
+      // Si B pasa por el origen antes del destino, mejor subir a B
+      // directamente (ya está entre los directos). Si pasa después del
+      // destino, B sí sirve para el segundo tramo.
+      final o = b.paradas.indexOf(origenId);
+      if (o >= 0 && o < n) continue;
 
       Trayecto? mejor;
       for (var k = i + 1; k < a.paradas.length; k++) {
