@@ -61,7 +61,7 @@ la red: usa `PantallaMapa.conexionParaPruebas`.
   - aviso: ⚠, «AVISO», borde de 3 dp y vibración;
   - desactivado: atenuado, y TalkBack añade «no disponible».
 
-  Las líneas se distinguen con las etiquetas neutras «L1»…«L4».
+  Las líneas se distinguen con las etiquetas neutras «L1»…«L9».
 - **Barra inferior**: crece con el texto. Si las cinco pestañas no caben en una fila,
   se reparten en 3 + 2 (o menos por fila).
 - **Mapa en alto contraste**: se usan las mismas teselas de OpenStreetMap, oscurecidas
@@ -103,7 +103,7 @@ lib/
   data/datos_mock.dart      Paradas, líneas, horarios de ejemplo y hora de referencia
   data/planificador.dart    Trayectos directos o con 1 trasbordo (máx. 3)
   ui/tema.dart              Paletas, tipografía, medidas y anillo de foco
-  ui/comunes.dart           Cabecera, filas, cajas de error, etiquetas L1…L4, campos, foco
+  ui/comunes.dart           Cabecera, filas, cajas de error, etiquetas L1…L9, campos, foco
   ui/armazon.dart           Barra inferior: Buscar · Líneas · Paradas · Mapa · Ajustes
   ui/pantallas/p1…p8        Las 8 pantallas
 docs/
